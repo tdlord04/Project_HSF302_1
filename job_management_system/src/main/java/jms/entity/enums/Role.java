@@ -4,6 +4,5 @@ public enum Role {
     ADMIN,
     HR,
     MANAGER,
-    INTERVIEWER,
-    CANDIDATE
+    INTERVIEWER
 }
