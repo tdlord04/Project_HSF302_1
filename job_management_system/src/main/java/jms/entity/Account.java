@@ -27,7 +27,7 @@ public class Account extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 50)
-    private Role role; // Quyền (ADMIN, HR, MANAGER, EMPLOYEE, CANDIDATE)
+    private Role role; // Quyền (ADMIN, HR, MANAGER, INTERVIEWER)
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 50)

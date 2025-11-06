@@ -45,30 +45,37 @@ GO
 -- 3) USER (nhân viên trong công ty, map tới account)
 --    Bảng tên là [user] trong DB (không phải account)
 -- ==============================================================
-INSERT INTO [user] (full_name, position, company_id, account_id, created_at, updated_at)
+INSERT INTO [user] (full_name, phone, address, company_id, account_id, created_at, updated_at)
 VALUES
-(N'Nguyễn Văn Admin', N'System Administrator',
+(N'Nguyễn Văn Admin', N'0901234567', N'Hà Nội',
     (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
     (SELECT id FROM account WHERE username = 'admin'), GETDATE(), GETDATE()),
-(N'Hoàng Thị HR', N'HR Specialist',
+
+(N'Hoàng Thị HR', N'0902345678', N'Hà Nội',
     (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
     (SELECT id FROM account WHERE username = 'hr01'), GETDATE(), GETDATE()),
-(N'Phạm Văn HR2', N'HR Assistant',
+
+(N'Phạm Văn HR2', N'0903456789', N'Hà Nội',
     (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
     (SELECT id FROM account WHERE username = 'hr02'), GETDATE(), GETDATE()),
-(N'Trần Quang Manager', N'Engineering Manager',
+
+(N'Trần Quang Manager', N'0904567890', N'Hà Nội',
     (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
     (SELECT id FROM account WHERE username = 'manager01'), GETDATE(), GETDATE()),
-(N'Trần Minh Manager2', N'Product Manager',
+
+(N'Trần Minh Manager2', N'0905678901', N'Đà Nẵng',
     (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
     (SELECT id FROM account WHERE username = 'manager02'), GETDATE(), GETDATE()),
-(N'Nguyễn Interviewer 1', N'Interviewer',
+
+(N'Nguyễn Interviewer 1', N'0906789012', N'HCM',
     (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
     (SELECT id FROM account WHERE username = 'interviewer01'), GETDATE(), GETDATE()),
-(N'Lê Interviewer 2', N'Interviewer',
+
+(N'Lê Interviewer 2', N'0907890123', N'HCM',
     (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
     (SELECT id FROM account WHERE username = 'interviewer02'), GETDATE(), GETDATE());
 GO
+
 
 -- ==============================================================
 -- 4) SKILL (danh mục kỹ năng)
@@ -241,7 +248,6 @@ GO
 -- 11) INTERVIEW (khoảng 12 cuộc)
 --    Tham chiếu application và interviewer (user)
 -- ==============================================================
-
 INSERT INTO interview (application_id, interviewer_id, interview_date, location, result, notes, created_at, updated_at)
 VALUES
 ((SELECT TOP 1 id FROM application WHERE candidate_id = (SELECT TOP 1 id FROM candidate_profile WHERE email='candidate02@mail.com') AND job_posting_id = (SELECT TOP 1 id FROM job_posting WHERE job_title = N'QA Engineer')),

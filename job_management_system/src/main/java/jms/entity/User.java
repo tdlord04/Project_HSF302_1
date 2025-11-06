@@ -22,8 +22,11 @@ public class User extends BaseEntity {
     @Column(name = "full_name", nullable = false, columnDefinition = "NVARCHAR(255)")
     private String fullName; // Họ tên nhân viên
 
-    @Column(name = "position", columnDefinition = "NVARCHAR(255)")
-    private String position; // Chức vụ
+    @Column(name = "phone")
+    private String phone; // Chức vụ
+
+    @Column(name = "address", columnDefinition = "NVARCHAR(255)")
+    private String address;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
