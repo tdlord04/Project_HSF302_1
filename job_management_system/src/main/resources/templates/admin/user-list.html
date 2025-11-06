@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/home}" lang="vi">
+<head>
+    <title layout:title="Danh sách người dùng">Danh sách người dùng</title>
+</head>
+
+<body>
+<section layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Danh sách người dùng</h4>
+        <a th:href="@{/admin/users/create}" class="btn btn-primary btn-sm">+ Thêm người dùng</a>
+    </div>
+
+    <table class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th>
+                <a th:href="@{|/admin/users?page=0&sortBy=fullName&direction=${direction == 'asc' ? 'desc' : 'asc'}|}">
+                    Họ tên
+                </a>
+            </th>
+            <th>Email</th>
+            <th>Điện thoại</th>
+            <th>Role</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${userPage.content}">
+            <td th:text="${user.fullName}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.phone}"></td>
+            <td th:text="${user.role}"></td>
+            <td th:text="${user.status}"></td>
+            <td>
+                <a th:href="@{/admin/users/edit/{id}(id=${user.userId})}" class="btn btn-sm btn-warning">Sửa</a>
+                <a th:href="@{/admin/users/delete/{id}(id=${user.userId})}" class="btn btn-sm btn-danger"
+                   onclick="return confirm('Xác nhận xóa?')">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <nav th:if="${userPage.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${userPage.first} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{|/admin/users?page=${userPage.number - 1}&sortBy=${sortBy}&direction=${direction}|}">Trước</a>
+            </li>
+
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, userPage.totalPages - 1)}"
+                th:classappend="${i == userPage.number} ? 'active'">
+                <a class="page-link"
+                   th:text="${i + 1}"
+                   th:href="@{|/admin/users?page=${i}&sortBy=${sortBy}&direction=${direction}|}"></a>
+            </li>
+
+            <li class="page-item" th:classappend="${userPage.last} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{|/admin/users?page=${userPage.number + 1}&sortBy=${sortBy}&direction=${direction}|}">Sau</a>
+            </li>
+        </ul>
+    </nav>
+
+</section>
+</body>
+</html>
