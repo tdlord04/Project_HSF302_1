@@ -1,16 +1,14 @@
 package jms.service.impl;
 
 import jms.dto.UserAccountDTO;
-import jms.entity.User;
+import jms.entity.enums.Role;
+import jms.entity.enums.UserStatus;
 import jms.mapper.UserAccountMapper;
 import jms.repository.UserRepository;
 import jms.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,8 +18,13 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final UserAccountMapper mapper;
 
     @Override
-    public Page<UserAccountDTO> findAll(Pageable pageable) {
-        return userRepository.findAllByDeletedAtIsNull(pageable)
+    public Page<UserAccountDTO> findAllFiltered(String roleStr, String statusStr, String keyword, Pageable pageable) {
+        Role role = (roleStr == null || roleStr.isEmpty()) ? null : Role.valueOf(roleStr);
+        UserStatus status = (statusStr == null || statusStr.isEmpty()) ? null : UserStatus.valueOf(statusStr);
+
+        return userRepository.findAllFiltered(role, status, keyword, pageable)
                 .map(mapper::toDTO);
     }
+
+
 }

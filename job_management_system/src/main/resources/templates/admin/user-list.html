@@ -13,14 +13,38 @@
         <a th:href="@{/admin/users/create}" class="btn btn-primary btn-sm">+ Thêm người dùng</a>
     </div>
 
+    <!-- Form lọc và tìm kiếm -->
+    <form th:action="@{/admin/users}" method="get" class="row g-2 mb-3">
+        <div class="col-auto">
+            <input type="text" name="keyword" th:value="${keyword}" class="form-control"
+                   placeholder="Tìm theo tên, email, điện thoại">
+        </div>
+        <div class="col-auto">
+            <select name="role" class="form-select">
+                <option value="" th:text="'-- Chọn Role --'"
+                        th:selected="${role == null || role == ''}"></option>
+                <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"
+                        th:selected="${r == role}"></option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <select name="status" class="form-select">
+                <option value="" th:text="'-- Chọn Trạng thái --'"
+                        th:selected="${status == null ||status == ''}"></option>
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"
+                        th:selected="${s == status}"></option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Lọc</button>
+            <a th:href="@{/admin/users}" class="btn btn-secondary">Reset</a>
+        </div>
+    </form>
+
     <table class="table table-hover table-bordered">
         <thead>
         <tr>
-            <th>
-                <a th:href="@{|/admin/users?page=0&sortBy=fullName&direction=${direction == 'asc' ? 'desc' : 'asc'}|}">
-                    Họ tên
-                </a>
-            </th>
+            <th>Họ tên</th>
             <th>Email</th>
             <th>Điện thoại</th>
             <th>Role</th>
@@ -49,23 +73,22 @@
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${userPage.first} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{|/admin/users?page=${userPage.number - 1}&sortBy=${sortBy}&direction=${direction}|}">Trước</a>
+                   th:href="@{|/admin/users?page=${userPage.number - 1}&role=${role}&status=${status}&keyword=${keyword}|}">Trước</a>
             </li>
 
             <li class="page-item" th:each="i : ${#numbers.sequence(0, userPage.totalPages - 1)}"
                 th:classappend="${i == userPage.number} ? 'active'">
                 <a class="page-link"
                    th:text="${i + 1}"
-                   th:href="@{|/admin/users?page=${i}&sortBy=${sortBy}&direction=${direction}|}"></a>
+                   th:href="@{|/admin/users?page=${i}&role=${role}&status=${status}&keyword=${keyword}|}"></a>
             </li>
 
             <li class="page-item" th:classappend="${userPage.last} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{|/admin/users?page=${userPage.number + 1}&sortBy=${sortBy}&direction=${direction}|}">Sau</a>
+                   th:href="@{|/admin/users?page=${userPage.number + 1}&role=${role}&status=${status}&keyword=${keyword}|}">Sau</a>
             </li>
         </ul>
     </nav>
-
 </section>
 </body>
 </html>
