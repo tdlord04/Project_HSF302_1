@@ -6,6 +6,7 @@ import jms.entity.enums.UserStatus;
 import jms.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,4 +44,16 @@ public class AdminUserController {
         return "admin/user-list";
     }
 
+    @GetMapping("/api")
+    public ResponseEntity<Page<UserAccountDTO>> listUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String keyword
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserAccountDTO> userPage = userAccountService.findAllFiltered(role, status, keyword, pageable);
+        return ResponseEntity.ok(userPage);
+    }
 }
