@@ -6,4 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface UserAccountService {
     Page<UserAccountDTO> findAllFiltered(String roleStr, String statusStr, String keyword, Pageable pageable);
+
+    UserAccountDTO createUser(UserAccountDTO dto);
+
 }
