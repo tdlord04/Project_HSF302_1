@@ -4,7 +4,9 @@
       layout:decorate="~{fragments/home}" lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title layout:title="${job.id != null ? 'Chỉnh sửa tin tuyển dụng' : 'Tạo tin tuyển dụng'}">${job.id != null ? 'Chỉnh sửa tin tuyển dụng' : 'Tạo tin tuyển dụng'}</title>
+    <title layout:title="${job.id != null ? 'Chỉnh sửa tin tuyển dụng' : 'Tạo tin tuyển dụng'}">
+        <span th:text="${job.id != null ? 'Chỉnh sửa tin tuyển dụng' : 'Tạo tin tuyển dụng'}"></span>
+    </title>
 </head>
 
 <body class="bg-light">
@@ -58,6 +60,7 @@
 
                     <!-- CÔNG TY & TRẠNG THÁI -->
                     <div class="row">
+                        <!-- Combo Công ty -->
                         <div class="col-md-6 mb-3 combo-container">
                             <label class="form-label fw-semibold">Công ty</label>
                             <input type="hidden" th:field="*{companyId}" id="companyId">
@@ -69,12 +72,14 @@
                             <div th:if="${#fields.hasErrors('companyId')}" th:errors="*{companyId}" class="text-danger small"></div>
                         </div>
 
+                        <!-- Combo Trạng thái -->
                         <div class="col-md-6 mb-3 combo-container">
                             <label class="form-label fw-semibold">Trạng thái</label>
                             <input type="hidden" th:field="*{status}" id="statusVal">
                             <input type="text" id="statusInput" class="form-control" placeholder="Tìm hoặc chọn trạng thái">
                             <div id="statusList" class="combo-list">
-                                <div class="combo-item" th:each="s : ${statuses}" th:data-id="${s}" th:text="${s}"></div>
+                                <div class="combo-item" th:each="s : ${statuses}"
+                                     th:data-id="${s}" th:text="${s}"></div>
                             </div>
                             <div th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="text-danger small"></div>
                         </div>
@@ -134,7 +139,7 @@
         });
     </script>
 
-    <!-- ✅ COMBO JS (Công ty + Trạng thái) -->
+    <!-- ✅ COMBO BOX SCRIPT -->
     <script>
         function initCombo(inputId, listId, hiddenId) {
             const input = document.getElementById(inputId);
@@ -150,7 +155,7 @@
                 items.forEach(item => {
                     item.style.display = item.textContent.toLowerCase().includes(value) ? 'block' : 'none';
                 });
-                hidden.value = '';
+                hidden.value = ''; // reset khi gõ tay
             });
 
             items.forEach(item => {
@@ -161,7 +166,7 @@
                 });
             });
 
-            // ✅ Nạp dữ liệu khi chỉnh sửa
+            // ✅ Khi load form edit, hiển thị giá trị cũ
             const preloadValue = hidden.value;
             if (preloadValue) {
                 const matchItem = items.find(i => i.dataset.id === preloadValue);
@@ -169,14 +174,30 @@
             }
         }
 
-        initCombo('companyInput', 'companyList', 'companyId');
-        initCombo('statusInput', 'statusList', 'statusVal');
+        // ✅ Khởi tạo combo
+        document.addEventListener('DOMContentLoaded', () => {
+            initCombo('companyInput', 'companyList', 'companyId');
+            initCombo('statusInput', 'statusList', 'statusVal');
+
+            // ✅ FIX CHÍNH: đảm bảo hidden cập nhật trước khi submit
+            const form = document.querySelector('form');
+            form.addEventListener('submit', (e) => {
+                const companyInput = document.getElementById('companyInput');
+                const companyHidden = document.getElementById('companyId');
+                const companyMatch = Array.from(document.querySelectorAll('#companyList .combo-item'))
+                    .find(i => i.textContent === companyInput.value);
+                if (companyMatch) companyHidden.value = companyMatch.dataset.id;
+
+                const statusInput = document.getElementById('statusInput');
+                const statusHidden = document.getElementById('statusVal');
+                const statusMatch = Array.from(document.querySelectorAll('#statusList .combo-item'))
+                    .find(i => i.textContent === statusInput.value);
+                if (statusMatch) statusHidden.value = statusMatch.dataset.id;
+            });
+        });
     </script>
 
 
 </section>
-
-
-
 </body>
 </html>

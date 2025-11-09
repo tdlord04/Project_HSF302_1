@@ -2,9 +2,11 @@ package jms.service.impl;
 
 import jms.dto.JobPostingDetailDto;
 import jms.dto.JobPostingDto;
+import jms.entity.Company;
 import jms.entity.JobPosting;
 import jms.entity.enums.JobStatus;
 import jms.mapper.JobPostingMapper;
+import jms.repository.CompanyRepository;
 import jms.repository.JobPostingRepository;
 import jms.service.JobPostingService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class JobPostingServiceImpl implements JobPostingService {
     private final JobPostingRepository jobPostingRepository;
     private final JobPostingMapper jobPostingMapper;
+    private final CompanyRepository companyRepository;
 
     @Override
     public List<JobPostingDto> getAll() {
@@ -40,6 +43,11 @@ public class JobPostingServiceImpl implements JobPostingService {
     @Override
     public JobPostingDto create(JobPostingDto dto) {
         JobPosting entity = jobPostingMapper.toJobPosting(dto);
+        if (dto.getCompanyId() != null) {
+            Company company = companyRepository.findById(dto.getCompanyId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy công ty với ID: " + dto.getCompanyId()));
+            entity.setCompany(company);
+        }
         JobPosting saved = jobPostingRepository.save(entity);
         return jobPostingMapper.toDTO(saved);
     }
@@ -54,6 +62,13 @@ public class JobPostingServiceImpl implements JobPostingService {
         existing.setLocation(dto.getLocation());
         existing.setSalaryRange(dto.getSalaryRange());
         existing.setStatus(dto.getStatus());
+
+        if (dto.getCompanyId() != null) {
+            Company company = companyRepository.findById(dto.getCompanyId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy công ty với ID: " + dto.getCompanyId()));
+            existing.setCompany(company);
+        }
+
         JobPosting updated = jobPostingRepository.save(existing);
         return jobPostingMapper.toDTO(updated);
     }
