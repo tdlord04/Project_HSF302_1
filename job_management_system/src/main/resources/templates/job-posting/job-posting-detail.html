@@ -1,202 +1,207 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/home}" lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${job.jobTitle} + ' - Job Detail'">Job Detail</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title layout:title="${job.jobTitle} + ' - Chi tiết công việc'">${job.jobTitle} + ' - Chi tiết công việc'</title>
 </head>
 
 <body class="bg-light">
-<div class="container mt-5 mb-5">
+<section layout:fragment="content">
+    <div class="container mt-5 mb-5">
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0" th:text="${job.jobTitle}"></h4>
-            <span class="badge bg-warning text-dark" th:text="${job.status}"></span>
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0" th:text="${job.jobTitle}"></h4>
+                <span class="badge bg-warning text-dark" th:text="${job.status}"></span>
+            </div>
+
+            <div class="card-body">
+
+                <!-- THÔNG TIN CƠ BẢN -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-secondary">📍 Địa điểm</h6>
+                        <p class="fw-semibold" th:text="${job.location}"></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-secondary">💰 Mức lương</h6>
+                        <p class="fw-semibold" th:text="${job.salaryRange != null ? job.salaryRange : 'Thỏa thuận'}"></p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- MÔ TẢ -->
+                <div class="mb-4">
+                    <h5 class="text-primary">📝 Mô tả công việc</h5>
+                    <div class="border rounded p-3 bg-white" th:utext="${job.description}"></div>
+                </div>
+
+                <!-- YÊU CẦU -->
+                <div class="mb-4">
+                    <h5 class="text-primary">📋 Yêu cầu công việc</h5>
+                    <div class="border rounded p-3 bg-white" th:utext="${job.requirements}"></div>
+                </div>
+
+                <hr>
+
+                <!-- THÔNG TIN CÔNG TY -->
+                <div class="mb-3">
+                    <h5 class="text-primary">🏢 Thông tin công ty</h5>
+                    <div class="border rounded bg-white p-3">
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>Tên công ty:</strong> <span th:text="${job.companyName}"></span></li>
+                            <li><strong>Email:</strong> <span th:text="${job.companyEmail}"></span></li>
+                            <li><strong>Số điện thoại:</strong> <span th:text="${job.companyPhone}"></span></li>
+                            <li><strong>Địa chỉ:</strong> <span th:text="${job.companyAddress}"></span></li>
+                            <li><strong>Website:</strong>
+                                <a th:href="${job.companyWebsite}" th:text="${job.companyWebsite}" target="_blank"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- DANH SÁCH FORM TÙY CHỈNH -->
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="text-primary mb-0">🧩 Form tùy chỉnh</h5>
+                        <a class="btn btn-success btn-sm"
+                           th:href="@{'/custom-forms/create?jobId=' + ${job.id}}">➕ Thêm form tùy chỉnh</a>
+                    </div>
+
+                    <table class="table table-bordered align-middle bg-white">
+                        <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên form</th>
+                            <th>Mô tả</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(customForms)}">
+                            <td colspan="6" class="text-center text-muted">Chưa có form tùy chỉnh nào cho công việc này.</td>
+                        </tr>
+                        <tr th:each="form : ${customForms}">
+                            <td th:text="${form.id}"></td>
+                            <td th:text="${form.formName}"></td>
+                            <td th:text="${form.description}"></td>
+                            <td>
+                            <span th:text="${form.active ? 'Đang hoạt động' : 'Ngừng hoạt động'}"
+                                  th:classappend="${form.active ? ' badge bg-success' : ' badge bg-secondary'}"></span>
+                            </td>
+
+                            <td>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-primary"
+                                        th:data-formid="${form.id}"
+                                        th:data-formname="${form.formName}"
+                                        th:data-description="${form.description}"
+                                        th:data-active="${form.active}"
+                                        th:data-structure="${form.formStructureJson}"
+                                        onclick="showFormModal(this)">
+                                    Xem
+                                </button>
+                                <a th:href="@{'/custom-forms/delete/' + ${form.id} + '?jobId=' + ${job.id}}"
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Bạn có chắc muốn xóa form này không?')">
+                                    Xóa
+                                </a>
+                                <a th:href="@{'/custom-forms/edit/' + ${form.id}}"
+                                   class="btn btn-sm btn-outline-warning">Sửa</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="card-footer d-flex justify-content-between">
+                <div>
+                    <a th:href="@{/job-postings}" class="btn btn-secondary">⬅️ Quay lại danh sách</a>
+                </div>
+                <div>
+                    <a th:href="@{'/job-postings/form/edit/' + ${job.id}}" class="btn btn-warning">✏️ Sửa</a>
+                    <a th:href="@{'/job-postings/delete/' + ${job.id}}"
+                       class="btn btn-danger"
+                       onclick="return confirm('Bạn có chắc muốn xóa tin tuyển dụng này không?')">🗑 Xóa</a>
+                </div>
+            </div>
         </div>
 
-        <div class="card-body">
-
-            <!-- BASIC INFO -->
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <h6 class="text-secondary">📍 Location</h6>
-                    <p class="fw-semibold" th:text="${job.location}"></p>
-                </div>
-                <div class="col-md-6">
-                    <h6 class="text-secondary">💰 Salary Range</h6>
-                    <p class="fw-semibold" th:text="${job.salaryRange != null ? job.salaryRange : 'Negotiable'}"></p>
-                </div>
-            </div>
-
-            <hr>
-
-            <!-- DESCRIPTION -->
-            <div class="mb-4">
-                <h5 class="text-primary">📝 Description</h5>
-                <div class="border rounded p-3 bg-white" th:utext="${job.description}"></div>
-            </div>
-
-            <!-- REQUIREMENTS -->
-            <div class="mb-4">
-                <h5 class="text-primary">📋 Requirements</h5>
-                <div class="border rounded p-3 bg-white" th:utext="${job.requirements}"></div>
-            </div>
-
-            <hr>
-
-            <!-- COMPANY INFO -->
-            <div class="mb-3">
-                <h5 class="text-primary">🏢 Company Information</h5>
-                <div class="border rounded bg-white p-3">
-                    <ul class="list-unstyled mb-0">
-                        <li><strong>Name:</strong> <span th:text="${job.companyName}"></span></li>
-                        <li><strong>Email:</strong> <span th:text="${job.companyEmail}"></span></li>
-                        <li><strong>Phone:</strong> <span th:text="${job.companyPhone}"></span></li>
-                        <li><strong>Address:</strong> <span th:text="${job.companyAddress}"></span></li>
-                        <li><strong>Website:</strong>
-                            <a th:href="${job.companyWebsite}" th:text="${job.companyWebsite}" target="_blank"></a>
-                        </li>
-                    </ul>
+        <!-- Modal: Chi tiết Form Tùy Chỉnh -->
+        <div class="modal fade" id="customFormModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Chi tiết Form tùy chỉnh</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5 id="modalFormName"></h5>
+                        <p id="modalFormDescription" class="text-muted"></p>
+                        <span id="modalFormStatus" class="badge"></span>
+                        <hr>
+                        <div id="modalFormItems"></div>
+                    </div>
                 </div>
             </div>
-
-            <hr>
-
-            <!-- CUSTOM FORM TABLE -->
-            <div class="mt-4">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h5 class="text-primary mb-0">🧩 Custom Forms</h5>
-                    <a class="btn btn-success btn-sm"
-                       th:href="@{'/custom-forms/create?jobId=' + ${job.id}}">➕ Add Custom Form</a>
-                </div>
-
-                <table class="table table-bordered align-middle bg-white">
-                    <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Form Name</th>
-                        <th>Description</th>
-                        <th>Active</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:if="${#lists.isEmpty(customForms)}">
-                        <td colspan="6" class="text-center text-muted">No custom forms created for this job yet.</td>
-                    </tr>
-                    <tr th:each="form : ${customForms}">
-                        <td th:text="${form.id}"></td>
-                        <td th:text="${form.formName}"></td>
-                        <td th:text="${form.description}"></td>
-                        <td>
-                            <span th:text="${form.active ? 'Active' : 'Inactive'}"
-                                th:classappend="${form.active ? ' badge bg-success' : ' badge bg-secondary'}"></span>
-                        </td>
-
-                        <td>
-                            <button type="button"
-                                    class="btn btn-sm btn-outline-primary"
-                                    th:data-formid="${form.id}"
-                                    th:data-formname="${form.formName}"
-                                    th:data-description="${form.description}"
-                                    th:data-active="${form.active}"
-                                    th:data-structure="${form.formStructureJson}"
-                                    onclick="showFormModal(this)">
-                                View
-                            </button>
-                            <a th:href="@{'/custom-forms/delete/' + ${form.id} + '?jobId=' + ${job.id}}"
-                               class="btn btn-sm btn-outline-danger"
-                               onclick="return confirm('Are you sure you want to delete this form?')">
-                                Delete
-                            </a>
-                            <a th:href="@{'/custom-forms/edit/' + ${form.id}}"
-                               class="btn btn-sm btn-outline-danger">Edit</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
         </div>
 
-        <div class="card-footer d-flex justify-content-between">
-            <div>
-                <a th:href="@{/job-postings}" class="btn btn-secondary">⬅️ Back to List</a>
-            </div>
-            <div>
-                <a th:href="@{'/job-postings/form/edit/' + ${job.id}}" class="btn btn-warning">✏️ Edit</a>
-                <a th:href="@{'/job-postings/delete/' + ${job.id}}"
-                   class="btn btn-danger"
-                   onclick="return confirm('Bạn có chắc muốn xóa tin tuyển dụng này không?')">🗑 Delete</a>
-            </div>
-        </div>
     </div>
 
-    <!-- Modal: Custom Form Detail -->
-    <div class="modal fade" id="customFormModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Custom Form Detail</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5 id="modalFormName"></h5>
-                    <p id="modalFormDescription" class="text-muted"></p>
-                    <span id="modalFormStatus" class="badge"></span>
-                    <hr>
-                    <div id="modalFormItems"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showFormModal(btn) {
+            const name = btn.getAttribute('data-formname');
+            const desc = btn.getAttribute('data-description') || "(Không có mô tả)";
+            const active = btn.getAttribute('data-active') === 'true';
+            const structureJson = btn.getAttribute('data-structure') || "[]";
 
+            // Gán thông tin cơ bản
+            document.getElementById("modalFormName").innerText = name;
+            document.getElementById("modalFormDescription").innerText = desc;
 
-</div>
+            const status = document.getElementById("modalFormStatus");
+            status.innerText = active ? "Đang hoạt động" : "Ngừng hoạt động";
+            status.className = "badge " + (active ? "bg-success" : "bg-secondary");
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    function showFormModal(btn) {
-        const name = btn.getAttribute('data-formname');
-        const desc = btn.getAttribute('data-description') || "(No description)";
-        const active = btn.getAttribute('data-active') === 'true';
-        const structureJson = btn.getAttribute('data-structure') || "[]";
+            // Hiển thị danh sách item (formStructureJson)
+            const container = document.getElementById("modalFormItems");
+            container.innerHTML = "";
 
-        // Gán thông tin cơ bản
-        document.getElementById("modalFormName").innerText = name;
-        document.getElementById("modalFormDescription").innerText = desc;
-
-        const status = document.getElementById("modalFormStatus");
-        status.innerText = active ? "Active" : "Inactive";
-        status.className = "badge " + (active ? "bg-success" : "bg-secondary");
-
-        // Hiển thị danh sách item (formStructureJson)
-        const container = document.getElementById("modalFormItems");
-        container.innerHTML = "";
-
-        try {
-            const items = JSON.parse(structureJson);
-            if (items.length === 0) {
-                container.innerHTML = "<p class='text-muted fst-italic'>No fields in this form.</p>";
-            } else {
-                items.forEach((item, i) => {
-                    const div = document.createElement("div");
-                    div.className = "border rounded p-3 mb-2 bg-light";
-                    div.innerHTML = `<h6>${i + 1}. ${item.title}</h6>
+            try {
+                const items = JSON.parse(structureJson);
+                if (items.length === 0) {
+                    container.innerHTML = "<p class='text-muted fst-italic'>Không có trường nào trong form này.</p>";
+                } else {
+                    items.forEach((item, i) => {
+                        const div = document.createElement("div");
+                        div.className = "border rounded p-3 mb-2 bg-light";
+                        div.innerHTML = `<h6>${i + 1}. ${item.title}</h6>
                                  <p class='text-muted mb-0'>${item.description || ""}</p>`;
-                    container.appendChild(div);
-                });
+                        container.appendChild(div);
+                    });
+                }
+            } catch (err) {
+                container.innerHTML = "<p class='text-danger'>Cấu trúc JSON không hợp lệ.</p>";
             }
-        } catch (err) {
-            container.innerHTML = "<p class='text-danger'>Invalid JSON structure.</p>";
-        }
 
-        // Mở modal
-        const modal = new bootstrap.Modal(document.getElementById("customFormModal"));
-        modal.show();
-    }
-</script>
+            // Mở modal
+            const modal = new bootstrap.Modal(document.getElementById("customFormModal"));
+            modal.show();
+        }
+    </script>
+</section>
+
+
+
 
 </body>
 </html>

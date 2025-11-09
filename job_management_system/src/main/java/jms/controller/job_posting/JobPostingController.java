@@ -21,7 +21,7 @@ public class JobPostingController {
     private final JobPostingService jobPostingService;
     private final CustomFormService customFormService;
 
-    // ===== LIST & FILTER =====
+    // ===== DANH SÁCH & BỘ LỌC =====
     @GetMapping
     public String list(@RequestParam(value = "title", required = false) String title,
                        @RequestParam(value = "location", required = false) String location,
@@ -39,7 +39,7 @@ public class JobPostingController {
         model.addAttribute("job", new JobPostingDto());
         model.addAttribute("statuses", JobStatus.values());
 
-        // giữ filter
+        // Giữ lại bộ lọc khi reload trang
         model.addAttribute("titleFilter", title);
         model.addAttribute("locationFilter", location);
         model.addAttribute("salaryRangeFilter", salaryRange);
@@ -50,7 +50,7 @@ public class JobPostingController {
         return "job-posting/job-posting-list";
     }
 
-    // ===== CREATE =====
+    // ===== TẠO MỚI =====
     @PostMapping("/create")
     public String create(@Valid @ModelAttribute("job") JobPostingDto dto,
                          BindingResult bindingResult,
@@ -66,7 +66,7 @@ public class JobPostingController {
         return "redirect:/job-postings";
     }
 
-    // ===== UPDATE =====
+    // ===== CẬP NHẬT =====
     @PostMapping("/update/{id}")
     public String update(@PathVariable Long id,
                          @Valid @ModelAttribute("job") JobPostingDto dto,
@@ -74,7 +74,7 @@ public class JobPostingController {
                          Model model) {
 
         if (bindingResult.hasErrors()) {
-            // nạp lại danh sách status nếu có lỗi
+            // Nạp lại danh sách trạng thái nếu có lỗi
             model.addAttribute("statuses", JobStatus.values());
             model.addAttribute("job", dto);
             return "job-posting/job-posting-detail";
@@ -84,14 +84,14 @@ public class JobPostingController {
         return "redirect:/job-postings/" + id;
     }
 
-    // ===== DELETE =====
+    // ===== XÓA =====
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         jobPostingService.delete(id);
         return "redirect:/job-postings";
     }
 
-    // ===== DETAIL =====
+    // ===== CHI TIẾT =====
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Model model) {
         model.addAttribute("job", jobPostingService.getDetailById(id));

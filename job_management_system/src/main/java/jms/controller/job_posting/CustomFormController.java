@@ -19,7 +19,7 @@ public class CustomFormController {
     private final CustomFormService customFormService;
     private final JobPostingService jobPostingService;
 
-    // CREATE
+    // TẠO MỚI
     @GetMapping("/create")
     public String create(@RequestParam("jobId") Long jobId, Model model) {
         CustomFormDto dto = CustomFormDto.builder()
@@ -28,22 +28,22 @@ public class CustomFormController {
                 .build();
 
         model.addAttribute("form", dto);
-        // ✅ Luôn set jobTitle từ service, không phụ thuộc DTO
+        // ✅ Luôn lấy jobTitle từ service, không phụ thuộc DTO
         model.addAttribute("jobTitle", jobPostingService.getById(jobId).getJobTitle());
         return "job-posting/custom-form-builder";
     }
 
-    // EDIT
+    // CHỈNH SỬA
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Long id, Model model) {
         CustomFormDto dto = customFormService.getById(id);
         model.addAttribute("form", dto);
-        // ✅ Với edit thì DTO đã có jobPostingId; lấy lại title từ jobId (đảm bảo không null)
+        // ✅ Với chỉnh sửa thì DTO đã có jobPostingId; lấy lại title từ jobId (đảm bảo không null)
         model.addAttribute("jobTitle", jobPostingService.getById(dto.getJobPostingId()).getJobTitle());
         return "job-posting/custom-form-builder";
     }
 
-    // SAVE (create or update)
+    // LƯU (tạo mới hoặc cập nhật)
     @PostMapping("/save")
     public String save(@Valid @ModelAttribute("form") CustomFormDto dto,
                        BindingResult result,
@@ -68,7 +68,7 @@ public class CustomFormController {
             result.addError(new FieldError("form", "formStructureJson", ex.getMessage()));
         } catch (RuntimeException ex) {
             // Các lỗi khác (ví dụ không tìm thấy Job) → đưa vào global error hoặc cùng field JSON
-            result.addError(new FieldError("form", "formStructureJson", "Invalid data: " + ex.getMessage()));
+            result.addError(new FieldError("form", "formStructureJson", "Dữ liệu không hợp lệ: " + ex.getMessage()));
         }
 
         // ✅ Trả lại view khi lỗi runtime/JSON và vẫn nạp jobTitle để không bị mất
@@ -79,7 +79,7 @@ public class CustomFormController {
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id, @RequestParam(value = "jobId", required = false) Long jobId) {
         customFormService.deleteById(id);
-        // Nếu có jobId → quay lại detail job tương ứng
+        // Nếu có jobId → quay lại chi tiết tin tuyển dụng tương ứng
         if (jobId != null) {
             return "redirect:/job-postings/" + jobId;
         }
@@ -90,7 +90,7 @@ public class CustomFormController {
         try {
             return jobPostingService.getById(jobPostingId).getJobTitle();
         } catch (Exception e) {
-            return "(Unknown Job)";
+            return "(Không xác định công việc)";
         }
     }
 }

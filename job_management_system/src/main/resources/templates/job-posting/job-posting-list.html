@@ -1,189 +1,132 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/home}" lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Job Posting List</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.ckeditor.com/4.21.0/standard-all/ckeditor.js"></script>
+    <title layout:title="Danh sách tin tuyển dụng">Danh sách tin tuyển dụng</title>
 </head>
 <body class="p-4 bg-light">
-<div class="container mt-5 mb-5">
+<section layout:fragment="content">
+    <div class="container mt-5 mb-5">
 
-    <h2 class="mb-4 text-center">📋 Job Posting List</h2>
+        <h2 class="mb-4 text-center">📋 Danh sách tin tuyển dụng</h2>
 
-    <div style="display: flex; gap: 5px">
-        <a th:href="@{'/recruitment-report'}" class="btn btn-primary" style="width: 100px">Dashboard</a>
-        <a th:href="@{'/job-postings/form/create'}" class="btn btn-primary" style="width: 100px">Create</a>
+        <div style="display: flex; gap: 5px">
+            <a th:href="@{'/recruitment-report'}" class="btn btn-primary" style="width: 100px">Báo cáo</a>
+            <a th:href="@{'/job-postings/form/create'}" class="btn btn-primary" style="width: 100px">Tạo mới</a>
+        </div>
+
+        <!-- FORM LỌC -->
+        <form method="get" th:action="@{/job-postings}" class="row g-2 align-items-end mb-4">
+            <div class="col-md-2">
+                <label class="form-label">Chức danh</label>
+                <input type="text" name="title" th:value="${titleFilter}" class="form-control">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Địa điểm</label>
+                <input type="text" name="location" th:value="${locationFilter}" class="form-control">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Mức lương</label>
+                <input type="text" name="salaryRange" th:value="${salaryRangeFilter}" class="form-control">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Công ty</label>
+                <input type="text" name="companyName" th:value="${companyNameFilter}" class="form-control">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Trạng thái</label>
+                <select name="status" class="form-select">
+                    <option value="">--Trạng thái--</option>
+                    <option th:each="st : ${statuses}"
+                            th:value="${st}"
+                            th:text="${st}"
+                            th:selected="${st == statusFilter}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-50">Lọc</button>
+                <a th:href="@{/job-postings}" class="btn btn-secondary w-50">Xóa</a>
+            </div>
+        </form>
+
+        <!-- BẢNG DANH SÁCH -->
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered align-middle text-center">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Chức danh</th>
+                    <th>Địa điểm</th>
+                    <th>Mức lương</th>
+                    <th>Trạng thái</th>
+                    <th>Công ty</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="job : ${postings}">
+                    <td th:text="${job.id}"></td>
+                    <td th:text="${job.jobTitle}"></td>
+                    <td th:text="${job.location}"></td>
+                    <td th:text="${job.salaryRange}"></td>
+                    <td>
+                        <span class="badge bg-info" th:text="${job.status}"></span>
+                    </td>
+                    <td th:text="${job.companyName}"></td>
+                    <td>
+                        <a th:href="@{'/job-postings/' + ${job.id}}" class="btn btn-sm btn-outline-primary">Xem</a>
+                        <a th:href="@{'/job-postings/delete/' + ${job.id}}"
+                           class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Bạn có chắc muốn xóa tin này không?')">Xóa</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(postings)}">
+                    <td colspan="7" class="text-muted">Không tìm thấy tin tuyển dụng nào.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <hr class="my-4">
+
     </div>
 
-    <!-- FILTER FORM -->
-    <form method="get" th:action="@{/job-postings}" class="row g-2 align-items-end mb-4">
-        <div class="col-md-2">
-            <label class="form-label">Job Title</label>
-            <input type="text" name="title" th:value="${titleFilter}" class="form-control">
-        </div>
+    <script src="https://cdn.ckeditor.com/4.21.0/standard-all/ckeditor.js"></script>
+    <script>
+        CKEDITOR.config.notification = false;
+        CKEDITOR.replace('descEditor', {
+            extraPlugins: 'autogrow',
+            autoGrow_minHeight: 120,
+            autoGrow_maxHeight: 600,
+            removePlugins: 'resize',
+            contentsCss: [
+                'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
+                'body { font-size: 14px; color: #212529; line-height: 1.5; }'
+            ]
+        });
 
-        <div class="col-md-2">
-            <label class="form-label">Location</label>
-            <input type="text" name="location" th:value="${locationFilter}" class="form-control">
-        </div>
+        CKEDITOR.replace('reqEditor', {
+            extraPlugins: 'autogrow',
+            autoGrow_minHeight: 100,
+            autoGrow_maxHeight: 600,
+            removePlugins: 'resize',
+            contentsCss: [
+                'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
+                'body { font-size: 14px; color: #212529; line-height: 1.5; }'
+            ]
+        });
+    </script>
+</section>
 
-        <div class="col-md-2">
-            <label class="form-label">Salary Range</label>
-            <input type="text" name="salaryRange" th:value="${salaryRangeFilter}" class="form-control">
-        </div>
 
-        <div class="col-md-2">
-            <label class="form-label">Company</label>
-            <input type="text" name="companyName" th:value="${companyNameFilter}" class="form-control">
-        </div>
-
-        <div class="col-md-2">
-            <label class="form-label">Status</label>
-            <select name="status" class="form-select">
-                <option value="">--Status--</option>
-                <option th:each="st : ${statuses}"
-                        th:value="${st}"
-                        th:text="${st}"
-                        th:selected="${st == statusFilter}">
-                </option>
-            </select>
-        </div>
-
-        <div class="col-md-2 d-flex gap-2">
-            <button type="submit" class="btn btn-primary w-50">Filter</button>
-            <a th:href="@{/job-postings}" class="btn btn-secondary w-50">Clear</a>
-        </div>
-    </form>
-
-    <!-- TABLE (no description/requirements) -->
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered align-middle text-center">
-            <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Location</th>
-                <th>Salary Range</th>
-                <th>Status</th>
-                <th>Company</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="job : ${postings}">
-                <td th:text="${job.id}"></td>
-                <td th:text="${job.jobTitle}"></td>
-                <td th:text="${job.location}"></td>
-                <td th:text="${job.salaryRange}"></td>
-                <td>
-                    <span class="badge bg-info" th:text="${job.status}"></span>
-                </td>
-                <td th:text="${job.companyName}"></td>
-                <td>
-                    <a th:href="@{'/job-postings/' + ${job.id}}" class="btn btn-sm btn-outline-primary">View</a>
-                    <a th:href="@{'/job-postings/delete/' + ${job.id}}"
-                       class="btn btn-sm btn-outline-danger"
-                       onclick="return confirm('Bạn có chắc muốn xóa tin này không?')">Delete</a>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(postings)}">
-                <td colspan="7" class="text-muted">No job postings found.</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <hr class="my-4">
-
-    <!-- CREATE FORM (same as Edit Form) -->
-<!--    <h3 class="mb-3 text-center">📝 Create New Job Posting</h3>-->
-
-<!--    <form th:action="@{/job-postings/create}" th:object="${job}" method="post" class="card p-4 shadow-sm bg-white">-->
-
-<!--        <div class="mb-3">-->
-<!--            <label class="form-label">Job Title</label>-->
-<!--            <input th:field="*{jobTitle}" class="form-control" placeholder="Enter job title">-->
-<!--            <div th:if="${#fields.hasErrors('jobTitle')}" th:errors="*{jobTitle}" class="text-danger small"></div>-->
-<!--        </div>-->
-
-<!--        <div class="row">-->
-<!--            <div class="col-md-6 mb-3">-->
-<!--                <label class="form-label">Location</label>-->
-<!--                <input th:field="*{location}" class="form-control" placeholder="Enter location">-->
-<!--                <div th:if="${#fields.hasErrors('location')}" th:errors="*{location}" class="text-danger small"></div>-->
-<!--            </div>-->
-<!--            <div class="col-md-6 mb-3">-->
-<!--                <label class="form-label">Salary Range</label>-->
-<!--                <input th:field="*{salaryRange}" class="form-control" placeholder="e.g. 15–25 million VND">-->
-<!--                <div th:if="${#fields.hasErrors('salaryRange')}" th:errors="*{salaryRange}" class="text-danger small"></div>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; DESCRIPTION &ndash;&gt;-->
-<!--        <div class="mb-3">-->
-<!--            <label class="form-label">Description</label>-->
-<!--            <textarea th:field="*{description}" id="descEditor" class="form-control" rows="4"-->
-<!--                      placeholder="Enter job description"></textarea>-->
-<!--            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="text-danger small"></div>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; REQUIREMENTS &ndash;&gt;-->
-<!--        <div class="mb-3">-->
-<!--            <label class="form-label">Requirements</label>-->
-<!--            <textarea th:field="*{requirements}" id="reqEditor" class="form-control" rows="3"-->
-<!--                      placeholder="Enter job requirements"></textarea>-->
-<!--            <div th:if="${#fields.hasErrors('requirements')}" th:errors="*{requirements}" class="text-danger small"></div>-->
-<!--        </div>-->
-
-<!--        <div class="row">-->
-<!--            <div class="col-md-4 mb-3">-->
-<!--                <label class="form-label">Status</label>-->
-<!--                <select th:field="*{status}" class="form-select">-->
-<!--                    <option value="">&#45;&#45; Select Status &#45;&#45;</option>-->
-<!--                    <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}"></option>-->
-<!--                </select>-->
-<!--                <div th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="text-danger small"></div>-->
-<!--            </div>-->
-
-<!--            <div class="col-md-8 mb-3">-->
-<!--                <label class="form-label">Company ID</label>-->
-<!--                <input th:field="*{companyId}" class="form-control" placeholder="Enter company ID">-->
-<!--                <div th:if="${#fields.hasErrors('companyId')}" th:errors="*{companyId}" class="text-danger small"></div>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--        <div class="text-end">-->
-<!--            <button type="submit" class="btn btn-success px-4">💾 Save</button>-->
-<!--        </div>-->
-<!--    </form>-->
-
-</div>
-
-<script>
-    CKEDITOR.config.notification = false;
-    CKEDITOR.replace('descEditor', {
-        extraPlugins: 'autogrow',
-        autoGrow_minHeight: 120,
-        autoGrow_maxHeight: 600,
-        removePlugins: 'resize',
-        contentsCss: [
-            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
-            'body { font-size: 14px; color: #212529; line-height: 1.5; }'
-        ]
-    });
-
-    CKEDITOR.replace('reqEditor', {
-        extraPlugins: 'autogrow',
-        autoGrow_minHeight: 100,
-        autoGrow_maxHeight: 600,
-        removePlugins: 'resize',
-        contentsCss: [
-            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
-            'body { font-size: 14px; color: #212529; line-height: 1.5; }'
-        ]
-    });
-</script>
 
 </body>
 </html>
