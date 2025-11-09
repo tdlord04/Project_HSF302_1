@@ -95,9 +95,134 @@
             </table>
         </div>
 
-        <hr class="my-4">
+        <div class="store-filter clearfix mt-4 text-center">
+    <span class="store-qty d-block mb-2 text-muted">
+        Showing
+        <b th:text="${(currentPage - 1) * numberPerPage + 1} + '-' + ${(currentPage - 1) * numberPerPage + postings.size()}"></b>
+        of
+        <b th:text="${totalProducts}"></b> jobs
+    </span>
+
+            <ul class="pagination justify-content-center mb-3" id="paginationBar">
+                <!-- Previous -->
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/job-postings(page=${currentPage - 1})}">&laquo;</a>
+                </li>
+
+                <!-- Always show first page -->
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'active'">
+                    <a class="page-link" th:href="@{/job-postings(page=1)}">1</a>
+                </li>
+
+                <!-- Ellipsis if too far from beginning -->
+                <li class="page-item disabled" th:if="${currentPage > 3}">
+                    <span class="page-link">...</span>
+                </li>
+
+                <!-- Dynamic middle pages -->
+                <li class="page-item"
+                    th:each="page : ${#numbers.sequence((currentPage > 2 ? currentPage - 1 : 2), (currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1))}"
+                    th:classappend="${page == currentPage} ? 'active'">
+                    <a class="page-link" th:text="${page}" th:href="@{/job-postings(page=${page})}"></a>
+                </li>
+
+                <!-- Ellipsis if not near the end -->
+                <li class="page-item disabled" th:if="${currentPage < totalPages - 2}">
+                    <span class="page-link">...</span>
+                </li>
+
+                <!-- Always show last page -->
+                <li class="page-item" th:if="${totalPages > 1}" th:classappend="${currentPage == totalPages} ? 'active'">
+                    <a class="page-link" th:text="${totalPages}" th:href="@{/job-postings(page=${totalPages})}"></a>
+                </li>
+
+                <!-- Next -->
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/job-postings(page=${currentPage + 1})}">&raquo;</a>
+                </li>
+            </ul>
+
+            <!-- Jump to page input -->
+            <div class="d-flex justify-content-center align-items-center gap-2">
+                <label for="jumpPage" class="text-muted mb-0">Go to page:</label>
+                <input id="jumpPage" type="number" min="1" class="form-control form-control-sm"
+                       style="width: 80px; text-align:center;"
+                       placeholder="Page #">
+                <button class="btn btn-sm btn-primary" id="jumpBtn">Go</button>
+            </div>
+        </div>
+
+
 
     </div>
+
+    <style>
+        .pagination {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .page-item .page-link {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            line-height: 38px;
+            color: #555;
+            border: 1px solid #ddd;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+        }
+
+        .page-item .page-link:hover {
+            background-color: #f2f2f2;
+            color: #007bff;
+        }
+        .pagination {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .page-item .page-link {
+            border-radius: 8px;
+            min-width: 40px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+        }
+
+        .page-item .page-link:hover {
+            background-color: #f2f2f2;
+            color: #007bff;
+        }
+
+    </style>
+
+    <script>
+        document.getElementById("jumpBtn").addEventListener("click", function() {
+            const input = document.getElementById("jumpPage");
+            let page = parseInt(input.value);
+            if (isNaN(page) || page < 1) page = 1; // luôn >= 1
+            window.location.href = `http://localhost:8080/JobMS/job-postings?page=${page}`;
+        });
+
+        document.getElementById("jumpPage").addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                document.getElementById("jumpBtn").click();
+            }
+        });
+    </script>
+
 
     <script src="https://cdn.ckeditor.com/4.21.0/standard-all/ckeditor.js"></script>
     <script>
@@ -125,7 +250,6 @@
         });
     </script>
 </section>
-
 
 
 </body>

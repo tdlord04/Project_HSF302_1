@@ -8,6 +8,10 @@ import jms.mapper.JobPostingMapper;
 import jms.repository.JobPostingRepository;
 import jms.service.JobPostingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -75,13 +79,16 @@ public class JobPostingServiceImpl implements JobPostingService {
     }
 
     @Override
-    public List<JobPostingDto> advancedFilter(String title, String location, String salaryRange, JobStatus status, String requirements, String companyName) {
-        List<JobPosting> jobs = jobPostingRepository.advancedFilter(
-                isEmpty(title), isEmpty(location), isEmpty(salaryRange), status,
-                isEmpty(requirements), isEmpty(companyName)
+    public Page<JobPostingDto> advancedFilterPaged(String title, String location, String salaryRange,
+                                                   JobStatus status, String requirements, String companyName,
+                                                   int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<JobPosting> jobs = jobPostingRepository.advancedFilterPaged(
+                title, location, salaryRange, status, requirements, companyName, pageable
         );
-        return jobs.stream().map(jobPostingMapper::toDTO).collect(Collectors.toList());
+        return jobs.map(jobPostingMapper::toDTO);
     }
+
 
     @Override
     public JobPostingDetailDto getDetailById(Long id) {
