@@ -19,19 +19,20 @@ go
 -- ==============================================================
 INSERT INTO account (username, email, password_hash, role, status, created_at, updated_at)
 VALUES
-('admin', 'admin@nextgenhr.com', '123456', 'ADMIN', 'ACTIVE', GETDATE(), GETDATE()),
-('hr01', 'hr01@nextgenhr.com', '123456', 'HR', 'ACTIVE', GETDATE(), GETDATE()),
-('hr02', 'hr02@nextgenhr.com', '123456', 'HR', 'ACTIVE', GETDATE(), GETDATE()),
-('manager01', 'manager01@nextgenhr.com', '123456', 'MANAGER', 'ACTIVE', GETDATE(), GETDATE()),
-('manager02', 'manager02@nextgenhr.com', '123456', 'MANAGER', 'ACTIVE', GETDATE(), GETDATE()),
-('interviewer01', 'interviewer01@nextgenhr.com', '123456', 'INTERVIEWER', 'ACTIVE', GETDATE(), GETDATE()),
-('interviewer02', 'interviewer02@nextgenhr.com', '123456', 'INTERVIEWER', 'ACTIVE', GETDATE(), GETDATE()),
-('candidate01', 'candidate01@mail.com', '123456', 'CANDIDATE', 'ACTIVE', GETDATE(), GETDATE()),
-('candidate02', 'candidate02@mail.com', '123456', 'CANDIDATE', 'ACTIVE', GETDATE(), GETDATE()),
-('candidate03', 'candidate03@mail.com', '123456', 'CANDIDATE', 'ACTIVE', GETDATE(), GETDATE()),
-('candidate04', 'candidate04@mail.com', '123456', 'CANDIDATE', 'ACTIVE', GETDATE(), GETDATE()),
-('candidate05', 'candidate05@mail.com', '123456', 'CANDIDATE', 'ACTIVE', GETDATE(), GETDATE());
+    ('admin', 'admin@nextgenhr.com', '$2a$10$Kpxh.5.DFdBTlrPmGVqYCe5DiEHzqyWdourJASxPK8GCwm0KxyUyG', 'ADMIN', 'ACTIVE', GETDATE(), GETDATE()),
+    ('hr01', 'hr01@nextgenhr.com', '$2a$10$aKF3mAqTpKk3OardETrP1.FyrxVext5ktVd27uL5YYaVRhZYSXN8K', 'HR', 'ACTIVE', GETDATE(), GETDATE()),
+    ('hr02', 'hr02@nextgenhr.com', '$2a$10$.CDZLNxX5CE3sHqxk8qAC.9s.Q3.Rlx7UJGh9MrSG5ARvTKI2aXgy', 'HR', 'ACTIVE', GETDATE(), GETDATE()),
+    ('manager01', 'manager01@nextgenhr.com', '$2a$10$116xwg/h1bJOz0tcdZewoe3XcpukhNw9bzNneXdo5Piv7lg3HDXhe', 'MANAGER', 'ACTIVE', GETDATE(), GETDATE()),
+    ('manager02', 'manager02@nextgenhr.com', '$2a$10$JHy4QUi9wFhopu1OXqA8X.33XQkKA7D3dfEM7kWQPeuT7VDDLQzgq', 'MANAGER', 'ACTIVE', GETDATE(), GETDATE()),
+    ('interviewer01', 'interviewer01@nextgenhr.com', '$2a$10$a0bNIJDU81trS8IeA4/ENOoEDMgbJcnrtGgNsvOVl179fy9KUVuQW', 'INTERVIEWER', 'ACTIVE', GETDATE(), GETDATE()),
+    ('interviewer02', 'interviewer02@nextgenhr.com', '$2a$10$X1QWLWUGzR2y0oryyhgZBOdGTW20jh8OWtlItzVwQhpVXC9rKXUaq', 'INTERVIEWER', 'ACTIVE', GETDATE(), GETDATE()),
+    ('candidate01', 'candidate01@mail.com', '$2a$10$U30AsQIAuu7YwvxszeHw0OHbjfcO86BPQWggonXZTOo6ZheHkOjMi', 'HR', 'ACTIVE', GETDATE(), GETDATE()),
+    ('candidate02', 'candidate02@mail.com', '$2a$10$fC1eAx8snT3z3phBUL9r/OXgeGGvqZjgaYLiqUEI1VWeuMayNhkH6', 'HR', 'ACTIVE', GETDATE(), GETDATE()),
+    ('candidate03', 'candidate03@mail.com', '$2a$10$XVW4.pGQ0q43Na.aCVgobu9Z5W3mHdR9sQmCLsRXW673Vuk2chDZi', 'MANAGER', 'ACTIVE', GETDATE(), GETDATE()),
+    ('candidate04', 'candidate04@mail.com', '$2a$10$Om8G7s34yCzrJ3042DPNTeuCtU330Y872ByXPuyyBwKYM4ifiOBaq', 'MANAGER', 'ACTIVE', GETDATE(), GETDATE()),
+    ('candidate05', 'candidate05@mail.com', '$2a$10$KVAjeLTffonRcXjv1uxzN.WCcJEXRrK9vAZ.nILv4NU3bPlvFnzju', 'MANAGER', 'ACTIVE', GETDATE(), GETDATE());
 GO
+
 
 -- ==============================================================
 -- 2) COMPANY (1 bản ghi)

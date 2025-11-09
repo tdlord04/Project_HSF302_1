@@ -15,7 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/admin/users")
+@RequestMapping(value = {"/admin/users","/", "/home"})
 @RequiredArgsConstructor
 public class AdminUserController {
 
