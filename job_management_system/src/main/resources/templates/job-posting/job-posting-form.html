@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/home}" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title layout:title="${job.id != null ? 'Chỉnh sửa tin tuyển dụng' : 'Tạo tin tuyển dụng'}">${job.id != null ? 'Chỉnh sửa tin tuyển dụng' : 'Tạo tin tuyển dụng'}</title>
+</head>
+
+<body class="bg-light">
+
+<section layout:fragment="content">
+    <div class="container mt-5 mb-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 th:text="${job.id != null ? '✏️ Chỉnh sửa tin tuyển dụng' : '🆕 Tạo tin tuyển dụng'}"></h4>
+            </div>
+
+            <div class="card-body">
+                <form th:action="@{/job-postings/form/save}" th:object="${job}" method="post">
+                    <input type="hidden" th:field="*{id}"/>
+
+                    <!-- TIÊU ĐỀ -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tên vị trí</label>
+                        <input th:field="*{jobTitle}" class="form-control" placeholder="Nhập tên vị trí tuyển dụng">
+                        <div th:if="${#fields.hasErrors('jobTitle')}" th:errors="*{jobTitle}" class="text-danger small"></div>
+                    </div>
+
+                    <!-- ĐỊA ĐIỂM & MỨC LƯƠNG -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Địa điểm làm việc</label>
+                            <input th:field="*{location}" class="form-control" placeholder="Nhập địa điểm làm việc">
+                            <div th:if="${#fields.hasErrors('location')}" th:errors="*{location}" class="text-danger small"></div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Mức lương</label>
+                            <input th:field="*{salaryRange}" class="form-control" placeholder="Ví dụ: 15–25 triệu VNĐ">
+                            <div th:if="${#fields.hasErrors('salaryRange')}" th:errors="*{salaryRange}" class="text-danger small"></div>
+                        </div>
+                    </div>
+
+                    <!-- MÔ TẢ -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mô tả công việc</label>
+                        <textarea th:field="*{description}" class="form-control" rows="5"></textarea>
+                        <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="text-danger small"></div>
+                    </div>
+
+                    <!-- YÊU CẦU -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Yêu cầu công việc</label>
+                        <textarea th:field="*{requirements}" class="form-control" rows="5"></textarea>
+                        <div th:if="${#fields.hasErrors('requirements')}" th:errors="*{requirements}" class="text-danger small"></div>
+                    </div>
+
+                    <!-- CÔNG TY & TRẠNG THÁI -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3 combo-container">
+                            <label class="form-label fw-semibold">Công ty</label>
+                            <input type="hidden" th:field="*{companyId}" id="companyId">
+                            <input type="text" id="companyInput" class="form-control" placeholder="Tìm hoặc chọn công ty">
+                            <div id="companyList" class="combo-list">
+                                <div class="combo-item" th:each="c : ${companies}"
+                                     th:data-id="${c.id}" th:text="${c.name}"></div>
+                            </div>
+                            <div th:if="${#fields.hasErrors('companyId')}" th:errors="*{companyId}" class="text-danger small"></div>
+                        </div>
+
+                        <div class="col-md-6 mb-3 combo-container">
+                            <label class="form-label fw-semibold">Trạng thái</label>
+                            <input type="hidden" th:field="*{status}" id="statusVal">
+                            <input type="text" id="statusInput" class="form-control" placeholder="Tìm hoặc chọn trạng thái">
+                            <div id="statusList" class="combo-list">
+                                <div class="combo-item" th:each="s : ${statuses}" th:data-id="${s}" th:text="${s}"></div>
+                            </div>
+                            <div th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="text-danger small"></div>
+                        </div>
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button type="submit" class="btn btn-success px-4">💾 Lưu</button>
+                        <a th:href="@{/job-postings}" class="btn btn-secondary px-4">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .combo-container {
+            position: relative;
+        }
+        .combo-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 0 0 .375rem .375rem;
+            max-height: 180px;
+            overflow-y: auto;
+            display: none;
+        }
+        .combo-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .combo-item:hover {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+    </style>
+
+    <!-- ✅ CKEDITOR -->
+    <script src="https://cdn.ckeditor.com/4.21.0/standard-all/ckeditor.js"></script>
+    <script>
+        CKEDITOR.config.notification = false;
+        ['description', 'requirements'].forEach(id => {
+            CKEDITOR.replace(id, {
+                extraPlugins: 'autogrow',
+                autoGrow_minHeight: 150,
+                autoGrow_maxHeight: 700,
+                removePlugins: 'resize,notification',
+                contentsCss: [
+                    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
+                    'body { font-size: 14px; color: #212529; line-height: 1.6; }'
+                ]
+            });
+        });
+    </script>
+
+    <!-- ✅ COMBO JS (Công ty + Trạng thái) -->
+    <script>
+        function initCombo(inputId, listId, hiddenId) {
+            const input = document.getElementById(inputId);
+            const list = document.getElementById(listId);
+            const hidden = document.getElementById(hiddenId);
+            const items = Array.from(list.querySelectorAll('.combo-item'));
+
+            input.addEventListener('focus', () => list.style.display = 'block');
+            input.addEventListener('blur', () => setTimeout(() => list.style.display = 'none', 150));
+
+            input.addEventListener('input', () => {
+                const value = input.value.toLowerCase();
+                items.forEach(item => {
+                    item.style.display = item.textContent.toLowerCase().includes(value) ? 'block' : 'none';
+                });
+                hidden.value = '';
+            });
+
+            items.forEach(item => {
+                item.addEventListener('mousedown', () => {
+                    input.value = item.textContent;
+                    hidden.value = item.dataset.id;
+                    list.style.display = 'none';
+                });
+            });
+
+            // ✅ Nạp dữ liệu khi chỉnh sửa
+            const preloadValue = hidden.value;
+            if (preloadValue) {
+                const matchItem = items.find(i => i.dataset.id === preloadValue);
+                if (matchItem) input.value = matchItem.textContent;
+            }
+        }
+
+        initCombo('companyInput', 'companyList', 'companyId');
+        initCombo('statusInput', 'statusList', 'statusVal');
+    </script>
+
+
+</section>
+
+
+
+</body>
+</html>

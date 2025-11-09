@@ -37,7 +37,7 @@ public class CustomForm extends BaseEntity {
     private String description;
 
     /**
-     * Cấu trúc form lưu dạng JSON (VD: [{“label”: “Kỹ năng”, “type”: “checkbox”, “options”: […]}, ...])
+     * Cấu trúc form lưu dạng JSON (VD: [{“title”: “Kỹ năng”, “description”: “...”}, ...])
      */
     @Lob
     @Column(name = "form_structure_json", columnDefinition = "NVARCHAR(MAX)")
