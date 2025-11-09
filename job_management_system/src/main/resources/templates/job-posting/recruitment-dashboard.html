@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Recruitment Report Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-light">
+<div class="container py-5">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-primary mb-0">📊 Recruitment Report Dashboard</h3>
+        <a th:href="@{/job-postings}" class="btn btn-secondary">↩️ Job Posting List</a>
+    </div>
+
+    <!-- Filter Form -->
+    <form class="row g-3 mb-4" th:action="@{/recruitment-report}" method="get">
+        <div class="col-md-3">
+            <label class="form-label">Start Date</label>
+            <input type="date" name="start" class="form-control" th:value="${req.start}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">End Date</label>
+            <input type="date" name="end" class="form-control" th:value="${req.end}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Company</label>
+            <select name="companyId" class="form-select">
+                <option value="">All Companies</option>
+                <option th:each="c : ${companies}"
+                        th:value="${c.id}"
+                        th:text="${c.name}"
+                        th:selected="${req.companyId != null and req.companyId == c.id}">
+                </option>
+            </select>
+        </div>
+        <div class="col-md-2 align-self-end">
+            <button class="btn btn-primary w-100">Filter</button>
+        </div>
+    </form>
+
+    <!-- KPI Cards -->
+    <div class="row text-center mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-success">
+                <div class="card-body">
+                    <h6 class="text-success mb-1">👥 Total Candidates</h6>
+                    <h2 class="mb-0" th:text="${kpi.totalCandidates}"></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-info">
+                <div class="card-body">
+                    <h6 class="text-info mb-1">🏁 Total Offers</h6>
+                    <h2 class="mb-0" th:text="${kpi.totalOffers}"></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-warning">
+                <div class="card-body">
+                    <h6 class="text-warning mb-1">🎯 Offer Rate (%)</h6>
+                    <h2 class="mb-0"
+                        th:text="${kpi.averageDaysToOffer != null ? #numbers.formatDecimal(kpi.averageDaysToOffer, 1, 1) + '%'
+                : 'N/A'}"></h2>
+                    <p class="text-muted small mb-0">Percentage of applicants who received an offer</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row">
+        <div class="col-md-8 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">📅 Candidates per Day</div>
+                <div class="card-body">
+                    <canvas id="lineTrend"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">🥧 Offer Ratio</div>
+                <div class="card-body">
+                    <canvas id="offerPie"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Chuyển List<String> và List<Integer> của Thymeleaf sang mảng JS thực
+    const trendLabels = [[${trendLabels}]];
+    const trendCounts = [[${trendCounts}]];
+    const totalOffers = [[${kpi.totalOffers}]];
+    const totalCandidates = [[${kpi.totalCandidates}]];
+    const others = Math.max(totalCandidates - totalOffers, 0);
+
+    // Debug xem đúng array chưa
+    console.log("trendLabels", trendLabels);
+    console.log("trendCounts", trendCounts);
+
+    // LINE CHART
+    new Chart(document.getElementById('lineTrend'), {
+        type: 'line',
+        data: {
+            labels: trendLabels,
+            datasets: [{
+                label: 'Applications per Day',
+                data: trendCounts,
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13,110,253,0.15)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {legend: {display: false}},
+            scales: {
+                x: {title: {display: true, text: 'Date'}},
+                y: {beginAtZero: true, ticks: {precision: 0}}
+            }
+        }
+    });
+
+    // PIE CHART
+    new Chart(document.getElementById('offerPie'), {
+        type: 'pie',
+        data: {
+            labels: ['Offers', 'Others'],
+            datasets: [{
+                data: [totalOffers, others],
+                backgroundColor: ['#0dcaf0', '#adb5bd']
+            }]
+        },
+        options: {responsive: true, plugins: {legend: {position: 'bottom'}}}
+    });
+    /*]]>*/
+</script>
+
+
+</body>
+</html>
