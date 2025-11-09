@@ -26,10 +26,10 @@ public class AuditLog {
     private User user; // Ai thực hiện hành động
 
     @Column(name = "action", nullable = false, columnDefinition = "NVARCHAR(255)")
-    private String action; // Loại hành động (CREATE_JOB, UPDATE_CANDIDATE,...)
+    private String action;
 
     @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
-    private String description; // Mô tả chi tiết hành động
+    private String description;
 
     @Column(name = "timestamp")
     private Instant timestamp; // Thời điểm xảy ra
