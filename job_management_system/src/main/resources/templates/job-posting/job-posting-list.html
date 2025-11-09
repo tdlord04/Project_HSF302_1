@@ -95,60 +95,88 @@
             </table>
         </div>
 
-        <div class="store-filter clearfix mt-4 text-center">
+        <div class="store-filter clearfix mt-4 text-center" th:if="${totalPages > 0}">
     <span class="store-qty d-block mb-2 text-muted">
-        Showing
+        Hiển thị
         <b th:text="${(currentPage - 1) * numberPerPage + 1} + '-' + ${(currentPage - 1) * numberPerPage + postings.size()}"></b>
-        of
-        <b th:text="${totalProducts}"></b> jobs
+        trong tổng số
+        <b th:text="${totalProducts}"></b> công việc
     </span>
 
-            <ul class="pagination justify-content-center mb-3" id="paginationBar">
-                <!-- Previous -->
+            <ul class="pagination justify-content-center mb-3">
+                <!-- Trang trước -->
                 <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                    <a class="page-link" th:href="@{/job-postings(page=${currentPage - 1})}">&laquo;</a>
+                    <a class="page-link" th:href="@{/job-postings(page=${currentPage - 1}, size=${numberPerPage})}">&laquo;</a>
                 </li>
 
-                <!-- Always show first page -->
-                <li class="page-item" th:classappend="${currentPage == 1} ? 'active'">
-                    <a class="page-link" th:href="@{/job-postings(page=1)}">1</a>
-                </li>
+                <!-- Trường hợp ít trang -->
+                <th:block th:if="${totalPages <= 3}">
+                    <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}"
+                        th:classappend="${page == currentPage} ? 'active'">
+                        <a class="page-link" th:text="${page}"
+                           th:href="@{/job-postings(page=${page}, size=${numberPerPage})}"></a>
+                    </li>
+                </th:block>
 
-                <!-- Ellipsis if too far from beginning -->
-                <li class="page-item disabled" th:if="${currentPage > 3}">
-                    <span class="page-link">...</span>
-                </li>
+                <!-- Trường hợp nhiều trang -->
+                <th:block th:if="${totalPages > 3}">
+                    <!-- Trang đầu -->
+                    <li class="page-item" th:classappend="${currentPage == 1} ? 'active'">
+                        <a class="page-link" th:href="@{/job-postings(page=1, size=${numberPerPage})}">1</a>
+                    </li>
 
-                <!-- Dynamic middle pages -->
-                <li class="page-item"
-                    th:each="page : ${#numbers.sequence((currentPage > 2 ? currentPage - 1 : 2), (currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1))}"
-                    th:classappend="${page == currentPage} ? 'active'">
-                    <a class="page-link" th:text="${page}" th:href="@{/job-postings(page=${page})}"></a>
-                </li>
+                    <!-- Dấu ... trái -->
+                    <li class="page-item disabled" th:if="${currentPage > 3}">
+                        <span class="page-link">...</span>
+                    </li>
 
-                <!-- Ellipsis if not near the end -->
-                <li class="page-item disabled" th:if="${currentPage < totalPages - 2}">
-                    <span class="page-link">...</span>
-                </li>
+                    <!-- Các trang giữa -->
+                    <li class="page-item"
+                        th:each="page : ${#numbers.sequence((currentPage > 2 ? currentPage - 1 : 2), (currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1))}"
+                        th:if="${page > 1 && page < totalPages}"
+                        th:classappend="${page == currentPage} ? 'active'">
+                        <a class="page-link" th:text="${page}"
+                           th:href="@{/job-postings(page=${page}, size=${numberPerPage})}"></a>
+                    </li>
 
-                <!-- Always show last page -->
-                <li class="page-item" th:if="${totalPages > 1}" th:classappend="${currentPage == totalPages} ? 'active'">
-                    <a class="page-link" th:text="${totalPages}" th:href="@{/job-postings(page=${totalPages})}"></a>
-                </li>
+                    <!-- Dấu ... phải -->
+                    <li class="page-item disabled" th:if="${currentPage < totalPages - 2}">
+                        <span class="page-link">...</span>
+                    </li>
 
-                <!-- Next -->
+                    <!-- Trang cuối -->
+                    <li class="page-item" th:classappend="${currentPage == totalPages} ? 'active'">
+                        <a class="page-link" th:text="${totalPages}"
+                           th:href="@{/job-postings(page=${totalPages}, size=${numberPerPage})}"></a>
+                    </li>
+                </th:block>
+
+                <!-- Trang sau -->
                 <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                    <a class="page-link" th:href="@{/job-postings(page=${currentPage + 1})}">&raquo;</a>
+                    <a class="page-link" th:href="@{/job-postings(page=${currentPage + 1}, size=${numberPerPage})}">&raquo;</a>
                 </li>
             </ul>
 
-            <!-- Jump to page input -->
-            <div class="d-flex justify-content-center align-items-center gap-2">
-                <label for="jumpPage" class="text-muted mb-0">Go to page:</label>
-                <input id="jumpPage" type="number" min="1" class="form-control form-control-sm"
-                       style="width: 80px; text-align:center;"
-                       placeholder="Page #">
-                <button class="btn btn-sm btn-primary" id="jumpBtn">Go</button>
+            <!-- Ô nhập & dropdown (giữ nguyên phần cũ) -->
+            <div class="d-flex justify-content-center align-items-center flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <label for="jumpPage" class="text-muted mb-0">Đi đến trang:</label>
+                    <input id="jumpPage" type="number" min="1" class="form-control form-control-sm"
+                           style="width: 80px; text-align:center;" placeholder="Số trang">
+                    <button class="btn btn-sm btn-primary" id="jumpBtn">Đi</button>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 ms-3">
+                    <label for="pageSizeSelect" class="text-muted mb-0">Hiển thị:</label>
+                    <select id="pageSizeSelect" class="form-select form-select-sm" style="width: 90px;">
+                        <option th:value="2" th:selected="${numberPerPage == 2}">2</option>
+                        <option th:value="10" th:selected="${numberPerPage == 10}">10</option>
+                        <option th:value="25" th:selected="${numberPerPage == 25}">25</option>
+                        <option th:value="50" th:selected="${numberPerPage == 50}">50</option>
+                        <option th:value="100" th:selected="${numberPerPage == 100}">100</option>
+                    </select>
+                    <span class="text-muted">dòng / trang</span>
+                </div>
             </div>
         </div>
 
@@ -157,32 +185,6 @@
     </div>
 
     <style>
-        .pagination {
-            display: inline-flex;
-            gap: 4px;
-        }
-
-        .page-item .page-link {
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            text-align: center;
-            line-height: 38px;
-            color: #555;
-            border: 1px solid #ddd;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .page-item.active .page-link {
-            background-color: #007bff;
-            border-color: #007bff;
-            color: #fff;
-        }
-
-        .page-item .page-link:hover {
-            background-color: #f2f2f2;
-            color: #007bff;
-        }
         .pagination {
             display: inline-flex;
             gap: 4px;
@@ -206,6 +208,10 @@
             color: #007bff;
         }
 
+        #pageSizeSelect {
+            cursor: pointer;
+        }
+
     </style>
 
     <script>
@@ -213,15 +219,20 @@
             const input = document.getElementById("jumpPage");
             let page = parseInt(input.value);
             if (isNaN(page) || page < 1) page = 1; // luôn >= 1
-            window.location.href = `http://localhost:8080/JobMS/job-postings?page=${page}`;
+            const size = document.getElementById("pageSizeSelect").value;
+            window.location.href = `http://localhost:8080/JobMS/job-postings?page=${page}&size=${size}`;
         });
 
         document.getElementById("jumpPage").addEventListener("keydown", function(e) {
-            if (e.key === "Enter") {
-                document.getElementById("jumpBtn").click();
-            }
+            if (e.key === "Enter") document.getElementById("jumpBtn").click();
+        });
+
+        document.getElementById("pageSizeSelect").addEventListener("change", function() {
+            const size = this.value;
+            window.location.href = `http://localhost:8080/JobMS/job-postings?page=1&size=${size}`;
         });
     </script>
+
 
 
     <script src="https://cdn.ckeditor.com/4.21.0/standard-all/ckeditor.js"></script>

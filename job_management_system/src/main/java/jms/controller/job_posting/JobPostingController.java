@@ -32,7 +32,7 @@ public class JobPostingController {
             @RequestParam(value = "requirements", required = false) String requirements,
             @RequestParam(value = "companyName", required = false) String companyName,
             @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "1") int size,
+            @RequestParam(value = "size", defaultValue = "25") int size,
             Model model) {
 
         Page<JobPostingDto> postingsPage = jobPostingService.advancedFilterPaged(
@@ -44,6 +44,7 @@ public class JobPostingController {
         model.addAttribute("totalPages", postingsPage.getTotalPages());
         model.addAttribute("totalProducts", postingsPage.getTotalElements());
         model.addAttribute("numberPerPage", size);
+        model.addAttribute("statuses", JobStatus.values());
 
         // Giữ lại bộ lọc
         model.addAttribute("titleFilter", title);

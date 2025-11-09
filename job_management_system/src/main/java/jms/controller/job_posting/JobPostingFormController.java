@@ -24,7 +24,9 @@ public class JobPostingFormController {
     // CREATE
     @GetMapping("/create")
     public String createForm(Model model) {
-        model.addAttribute("job", new JobPostingDto());
+        if (!model.containsAttribute("job")) {
+            model.addAttribute("job", new JobPostingDto());
+        }
         model.addAttribute("statuses", JobStatus.values());
         model.addAttribute("companies", companyService.getAll());
         return "job-posting/job-posting-form";
@@ -46,16 +48,21 @@ public class JobPostingFormController {
                        BindingResult bindingResult,
                        Model model) {
 
+        // ✅ Nếu có lỗi — giữ nguyên data đã nhập, chỉ hiển thị lỗi
         if (bindingResult.hasErrors()) {
             model.addAttribute("statuses", JobStatus.values());
             model.addAttribute("companies", companyService.getAll());
             return "job-posting/job-posting-form";
         }
+
+        // ✅ Tạo mới
         if (dto.getId() == null) {
-            jobPostingService.create(dto);
-        } else {
-            jobPostingService.update(dto.getId(), dto);
+            JobPostingDto saved = jobPostingService.create(dto);
+            return "redirect:/job-postings/" + saved.getId();
         }
+
+        // ✅ Cập nhật
+        jobPostingService.update(dto.getId(), dto);
         return "redirect:/job-postings/" + dto.getId();
     }
 }
