@@ -9,13 +9,14 @@ import jms.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping(value = {"/admin/users","/", "/home"})
+@RequestMapping(value = {"/manager/users"})
 @RequiredArgsConstructor
 public class AdminUserController {
 
@@ -45,7 +46,7 @@ public class AdminUserController {
         model.addAttribute("roles", Role.values());
         model.addAttribute("statuses", UserStatus.values());
 
-        return "admin/user-list";
+        return "users/user-list";
     }
 
     @GetMapping("/create")
@@ -54,7 +55,7 @@ public class AdminUserController {
         model.addAttribute("roles", Role.values());
         model.addAttribute("statuses", UserStatus.values());
         model.addAttribute("companies", companyRepository.findAll()); // nếu có danh sách công ty
-        return "admin/user-form";
+        return "users/user-form";
     }
 
     @PostMapping("/create")
@@ -67,12 +68,20 @@ public class AdminUserController {
             model.addAttribute("roles", Role.values());
             model.addAttribute("statuses", UserStatus.values());
             model.addAttribute("companies", companyRepository.findAll());
-            return "admin/user-form";
+            return "users/user-form";
         }
 
         userAccountService.createUser(dto);
-        return "redirect:/admin/users?success";
+        return "redirect:/users/users?success";
     }
+
+    @GetMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')") // Chỉ admin mới xóa được
+    public String deleteUser(@PathVariable("id") Long userId) {
+        userAccountService.deleteUser(userId);
+        return "redirect:/manager/users?deleted";
+    }
+
 
     @GetMapping("/api")
     public ResponseEntity<Page<UserAccountDTO>> listUsers(

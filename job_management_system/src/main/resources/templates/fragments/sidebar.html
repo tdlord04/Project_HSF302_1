@@ -15,12 +15,12 @@
             </h4>
         </div>
 
-        <a th:href="@{/admin/dashboard}"
+        <a th:href="@{/templates/users/dashboard}"
            th:classappend="${currentPath.startsWith('/admin/dashboard')} ? 'active'">
             <i class="bi bi-speedometer2 me-2"></i> Dashboard
         </a>
 
-        <a th:href="@{/admin/users}"
+        <a th:href="@{/templates/users/users}"
            th:classappend="${currentPath.startsWith('/JobMS/admin/users')} ? 'active'">
             <i class="bi bi-people-fill me-2"></i> Quản lý người dùng
         </a>

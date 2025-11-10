@@ -17,7 +17,7 @@
                 <p class="text-muted small mb-0">Quản lý và theo dõi tất cả người dùng trong hệ thống</p>
             </div>
             <div class="col-12 col-md-3 justify-content-md-end mt-3 mt-md-0">
-                <a th:href="@{/admin/users/create}" class="btn btn-primary btn-sm w-100 w-md-auto">
+                <a th:href="@{/templates/users/users/create}" class="btn btn-primary btn-sm w-100 w-md-auto">
                     <i class="bi bi-plus-circle me-2"></i>Thêm người dùng
                 </a>
             </div>
@@ -29,7 +29,7 @@
                 <h5 class="card-title fw-bold mb-3 mb-md-4">
                     <i class="bi bi-funnel me-2 text-primary"></i>Bộ lọc & Tìm kiếm
                 </h5>
-                <form th:action="@{/admin/users}" method="get" class="row g-2 g-md-3">
+                <form th:action="@{/templates/users/users}" method="get" class="row g-2 g-md-3">
 
                     <div class="col-12 col-md-6 col-lg-4">
                         <label class="form-label fw-500 small">Tìm kiếm</label>
@@ -62,7 +62,7 @@
                         <button type="submit" class="btn btn-primary btn-sm flex-grow-1">
                             <i class="bi bi-search me-1"></i>Lọc
                         </button>
-                        <a th:href="@{/admin/users}" class="btn btn-outline-secondary btn-sm flex-grow-1">
+                        <a th:href="@{/templates/users/users}" class="btn btn-outline-secondary btn-sm flex-grow-1">
                             <i class="bi bi-arrow-clockwise me-1"></i>Đặt lại
                         </a>
                     </div>
@@ -115,12 +115,12 @@
                             </td>
                             <td class="text-center pe-3 pe-md-4">
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <a th:href="@{/admin/users/edit/{id}(id=${user.userId})}"
+                                    <a th:href="@{/templates/users/users/edit/{id}(id=${user.userId})}"
                                        class="btn btn-outline-primary"
                                        title="Chỉnh sửa">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a th:href="@{/admin/users/delete/{id}(id=${user.userId})}"
+                                    <a th:href="@{/manager/users/delete/{id}(id=${user.userId})}"
                                        class="btn btn-outline-danger"
                                        onclick="return confirm('Xác nhận xóa: ' + '[[${user.fullName}]]' + '?')"
                                        title="Xóa">
@@ -146,7 +146,7 @@
                     <ul class="pagination justify-content-center mb-0 flex-wrap gap-1">
                         <li class="page-item" th:classappend="${userPage.first} ? 'disabled'">
                             <a class="page-link"
-                               th:href="@{|/admin/users?page=${userPage.number - 1}&role=${role}&status=${status}&keyword=${keyword}|}"
+                               th:href="@{|/templates/users/users?page=${userPage.number - 1}&role=${role}&status=${status}&keyword=${keyword}|}"
                                aria-label="Trang trước">
                                 <i class="bi bi-chevron-left"></i>
                             </a>
@@ -158,12 +158,12 @@
                             th:if="${i < 5 || i == userPage.number || i >= userPage.totalPages - 2}">
                             <a class="page-link"
                                th:text="${i + 1}"
-                               th:href="@{|/admin/users?page=${i}&role=${role}&status=${status}&keyword=${keyword}|}"></a>
+                               th:href="@{|/templates/users/users?page=${i}&role=${role}&status=${status}&keyword=${keyword}|}"></a>
                         </li>
 
                         <li class="page-item" th:classappend="${userPage.last} ? 'disabled'">
                             <a class="page-link"
-                               th:href="@{|/admin/users?page=${userPage.number + 1}&role=${role}&status=${status}&keyword=${keyword}|}"
+                               th:href="@{|/templates/users/users?page=${userPage.number + 1}&role=${role}&status=${status}&keyword=${keyword}|}"
                                aria-label="Trang sau">
                                 <i class="bi bi-chevron-right"></i>
                             </a>
