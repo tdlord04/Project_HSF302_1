@@ -92,7 +92,7 @@ public class AdminUserController {
     }
 
     @GetMapping("/delete/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')") // Chỉ users mới xóa được
+//    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')") // Chỉ users mới xóa được
     public String deleteUser(@PathVariable("id") Long userId) {
         userAccountService.deleteUser(userId);
         return "redirect:/manager/users?deleted";
