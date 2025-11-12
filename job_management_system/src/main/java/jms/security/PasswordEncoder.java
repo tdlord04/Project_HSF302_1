@@ -18,15 +18,20 @@ public class PasswordEncoder {
     }
 
     public static void main(String[] args) {
-        String[] users = {
-                "admin", "hr01", "hr02", "manager01", "manager02",
-                "interviewer01", "interviewer02",
-                "candidate01", "candidate02", "candidate03", "candidate04", "candidate05"
-        };
+//        String[] users = {
+//                "users", "hr01", "hr02", "manager01", "manager02",
+//                "interviewer01", "interviewer02",
+//                "candidate01", "candidate02", "candidate03", "candidate04", "candidate05"
+//        };
+//
+//        for (String user : users) {
+//            String hash = PasswordEncoder.encrypt("123456");
+//            System.out.printf("UPDATE account SET password_hash = '%s' WHERE username = '%s';%n", hash, user);
+//        }
 
-        for (String user : users) {
-            String hash = PasswordEncoder.encrypt("123456");
-            System.out.printf("UPDATE account SET password_hash = '%s' WHERE username = '%s';%n", hash, user);
-        }
+        String raw = "123456";
+        String hash = "$2a$10$Kpxh.5.DFdBTlrPmGVqYCe5DiEHzqyWdourJASxPK8GCwm0KxyUyG";
+        boolean ok = new BCryptPasswordEncoder().matches(raw, hash);
+        System.out.println(ok); // phải true
     }
 }

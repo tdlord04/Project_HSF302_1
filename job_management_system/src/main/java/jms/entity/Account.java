@@ -32,4 +32,15 @@ public class Account extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 50)
     private UserStatus status = UserStatus.ACTIVE; // ACTIVE / INACTIVE / LOCKED
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
+                ", role=" + role +
+                ", status=" + status +
+                '}';
+    }
 }
