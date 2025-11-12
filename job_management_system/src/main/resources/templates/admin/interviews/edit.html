@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/home}" lang="vi">
+<head>
+    <title layout:title="Chỉnh sửa phỏng vấn">Chỉnh sửa phỏng vấn</title>
+</head>
+
+<body>
+<section layout:fragment="content">
+    <div class="container-fluid py-4 py-md-5">
+
+        <!-- Header section -->
+        <div class="row">
+            <div class="col-12">
+                <h1 class="h2 fw-bold mb-2">Chỉnh sửa phỏng vấn</h1>
+                <p class="text-muted small mb-0">Cập nhật thông tin buổi phỏng vấn</p>
+            </div>
+        </div>
+
+        <!-- Edit form -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body p-4">
+                <form th:action="@{/admin/interviews/edit/{id}(id=${interview.id})}"
+                      th:object="${interview}" method="post" class="row g-3">
+
+                    <!-- Hidden ID field -->
+                    <input type="hidden" th:field="*{id}">
+                    <input type="hidden" th:field="*{applicationId}">
+
+                    <!-- Candidate Information (readonly) -->
+                    <div class="col-12">
+                        <h5 class="fw-bold mb-3">Thông tin ứng viên</h5>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-500">Tên ứng viên</label>
+                        <input type="text" class="form-control"
+                               th:value="${interview.candidateName}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-500">Vị trí ứng tuyển</label>
+                        <input type="text" class="form-control"
+                               th:value="${interview.jobTitle}" readonly>
+                    </div>
+
+                    <!-- Interview Details -->
+                    <div class="col-12 mt-4">
+                        <h5 class="fw-bold mb-3">Thông tin phỏng vấn</h5>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-500">Người phỏng vấn</label>
+                        <select th:field="*{interviewerId}" class="form-select">
+                            <option value="">-- Chọn người phỏng vấn --</option>
+                            <option th:each="iv : ${interviewers}"
+                                    th:value="${iv.id}"
+                                    th:text="${iv.fullName}"
+                                    th:selected="${iv.id == interview.interviewerId}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-500">Ngày giờ phỏng vấn</label>
+                        <input type="datetime-local" th:field="*{interviewDate}"
+                               class="form-control" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-500">Địa điểm</label>
+                        <input type="text" th:field="*{location}"
+                               class="form-control" placeholder="Nhập địa điểm phỏng vấn">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-500">Ghi chú</label>
+                        <textarea th:field="*{notes}" class="form-control"
+                                  rows="4" placeholder="Nhập ghi chú..."></textarea>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="col-12 mt-4">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a th:href="@{/admin/interviews}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-2"></i>Cập nhật
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <style>
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .card {
+            border-radius: 0.5rem;
+        }
+
+        .btn {
+            border-radius: 0.375rem;
+            padding: 0.5rem 1rem;
+        }
+    </style>
+</section>
+</body>
+</html>

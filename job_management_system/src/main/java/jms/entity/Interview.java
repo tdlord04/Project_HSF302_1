@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * Cuộc phỏng vấn
@@ -25,7 +26,7 @@ public class Interview extends BaseEntity {
     private User interviewer; // Người phỏng vấn
 
     @Column(name = "interview_date")
-    private Instant interviewDate; // Ngày và giờ phỏng vấn
+    private LocalDateTime interviewDate; // Ngày và giờ phỏng vấn
 
     @Column(name = "location", columnDefinition = "NVARCHAR(255)")
     private String location; // Địa điểm phỏng vấn (có thể là online link)

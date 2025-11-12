@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/home}" lang="vi">
+<head>
+    <title layout:title="Thêm phỏng vấn">Thêm phỏng vấn</title>
+</head>
+
+<body>
+<section layout:fragment="content">
+    <div class="container-fluid py-4 py-md-5">
+
+        <!-- Header section -->
+        <div class="row">
+            <div class="col-12">
+                <h1 class="h2 fw-bold mb-2">Thêm phỏng vấn mới</h1>
+                <p class="text-muted small mb-0">Tạo buổi phỏng vấn mới cho ứng viên</p>
+            </div>
+        </div>
+
+        <!-- Create form -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body p-4">
+                <form th:action="@{/admin/interviews/create}"
+                      th:object="${interview}" method="post" class="row g-3">
+
+                    <!-- Application Selection -->
+                    <div class="col-12">
+                        <h5 class="fw-bold mb-3 text-primary">
+                            <i class="bi bi-person-plus me-2"></i>Chọn ứng viên
+                        </h5>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-500">Đơn ứng tuyển <span class="text-danger">*</span></label>
+                        <select th:field="*{applicationId}" class="form-select" required>
+                            <option value="">-- Chọn đơn ứng tuyển --</option>
+                            <option th:each="app : ${applications}"
+                                    th:value="${app.id}"
+                                    th:text="|${app.candidate.fullName} - ${app.jobPosting.jobTitle}|">
+                            </option>
+                        </select>
+                        <div class="form-text">Chọn ứng viên và vị trí cần phỏng vấn</div>
+                    </div>
+
+                    <!-- Interview Details -->
+                    <div class="col-12 mt-4">
+                        <h5 class="fw-bold mb-3 text-primary">
+                            <i class="bi bi-calendar-event me-2"></i>Thông tin phỏng vấn
+                        </h5>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-500">Người phỏng vấn <span class="text-danger">*</span></label>
+                        <select th:field="*{interviewerId}" class="form-select" required>
+                            <option value="">-- Chọn người phỏng vấn --</option>
+                            <option th:each="iv : ${interviewers}"
+                                    th:value="${iv.id}"
+                                    th:text="${iv.fullName}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-500">Ngày giờ phỏng vấn <span class="text-danger">*</span></label>
+                        <input type="datetime-local" th:field="*{interviewDate}"
+                               class="form-control" required>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-500">Địa điểm</label>
+                        <input type="text" th:field="*{location}"
+                               class="form-control"
+                               placeholder="Ví dụ: Phòng họp A, Tầng 5 hoặc Google Meet">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-500">Ghi chú chuẩn bị</label>
+                        <textarea th:field="*{notes}" class="form-control"
+                                  rows="4" placeholder="Nhập ghi chú về nội dung cần phỏng vấn..."></textarea>
+                    </div>
+
+                    <!-- Interview Type -->
+                    <div class="col-12">
+                        <label class="form-label fw-500">Hình thức phỏng vấn</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="interviewType" id="online" value="ONLINE" checked>
+                                <label class="form-check-label" for="online">
+                                    <i class="bi bi-camera-video me-1"></i>Online
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="interviewType" id="offline" value="OFFLINE">
+                                <label class="form-check-label" for="offline">
+                                    <i class="bi bi-building me-1"></i>Trực tiếp
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="col-12 mt-4 pt-3 border-top">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a th:href="@{/admin/interviews}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Hủy bỏ
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>Tạo phỏng vấn
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <style>
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+
+        .card {
+            border-radius: 0.75rem;
+        }
+
+        .btn {
+            border-radius: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            font-weight: 500;
+        }
+
+        .form-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+    </style>
+</section>
+</body>
+</html>

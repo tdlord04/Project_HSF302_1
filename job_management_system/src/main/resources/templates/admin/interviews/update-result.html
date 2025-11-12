@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/home}" lang="vi">
+<head>
+    <title layout:title="Cập nhật kết quả">Cập nhật kết quả</title>
+</head>
+
+<body>
+<section layout:fragment="content">
+    <div class="container-fluid py-4 py-md-5">
+
+        <!-- Header section -->
+        <div class="row">
+            <div class="col-12">
+                <h1 class="h2 fw-bold mb-2">Cập nhật kết quả phỏng vấn</h1>
+                <p class="text-muted small mb-0">Đánh giá và cập nhật kết quả buổi phỏng vấn</p>
+            </div>
+        </div>
+
+        <!-- Interview Information -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3 text-primary">
+                    <i class="bi bi-info-circle me-2"></i>Thông tin phỏng vấn
+                </h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Ứng viên:</strong>
+                        <div class="fw-600" th:text="${interview.candidateName}"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Vị trí:</strong>
+                        <div th:text="${interview.jobTitle}"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Người PV:</strong>
+                        <div th:text="${interview.interviewerName} ?: 'Chưa có'"></div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-4">
+                        <strong>Thời gian:</strong>
+                        <div th:text="${#temporals.format(interview.interviewDate, 'dd/MM/yyyy HH:mm')}"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Địa điểm:</strong>
+                        <div th:text="${interview.location} ?: 'Online'"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Trạng thái:</strong>
+                        <span th:if="${interview.result == 'PENDING'}" class="badge bg-warning">Đang chờ</span>
+                        <span th:if="${interview.result == 'PASS'}" class="badge bg-success">Đậu</span>
+                        <span th:if="${interview.result == 'FAIL'}" class="badge bg-danger">Rớt</span>
+                        <span th:if="${interview.result == null}" class="badge bg-secondary">Chưa có</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Result Form -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form th:action="@{/admin/interviews/update-result/{id}(id=${interview.id})}"
+                      method="post" class="row g-3">
+
+                    <!-- Result Selection -->
+                    <div class="col-12">
+                        <h5 class="fw-bold mb-3 text-primary">
+                            <i class="bi bi-clipboard-check me-2"></i>Kết quả phỏng vấn
+                        </h5>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-500">Kết quả <span class="text-danger">*</span></label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check card-option">
+                                    <input class="form-check-input" type="radio" name="result" id="resultPass" value="PASS" required>
+                                    <label class="form-check-label w-100" for="resultPass">
+                                        <div class="card border-success">
+                                            <div class="card-body text-center">
+                                                <i class="bi bi-check-circle-fill text-success mb-2" style="font-size: 1.5rem;"></i>
+                                                <h6 class="card-title mb-1">Đậu</h6>
+                                                <small class="text-muted">Ứng viên đạt yêu cầu</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check card-option">
+                                    <input class="form-check-input" type="radio" name="result" id="resultFail" value="FAIL" required>
+                                    <label class="form-check-label w-100" for="resultFail">
+                                        <div class="card border-danger">
+                                            <div class="card-body text-center">
+                                                <i class="bi bi-x-circle-fill text-danger mb-2" style="font-size: 1.5rem;"></i>
+                                                <h6 class="card-title mb-1">Rớt</h6>
+                                                <small class="text-muted">Ứng viên không đạt</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check card-option">
+                                    <input class="form-check-input" type="radio" name="result" id="resultPending" value="PENDING" required>
+                                    <label class="form-check-label w-100" for="resultPending">
+                                        <div class="card border-warning">
+                                            <div class="card-body text-center">
+                                                <i class="bi bi-clock-fill text-warning mb-2" style="font-size: 1.5rem;"></i>
+                                                <h6 class="card-title mb-1">Đang chờ</h6>
+                                                <small class="text-muted">Chưa có kết quả</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Evaluation Notes -->
+                    <div class="col-12 mt-4">
+                        <label class="form-label fw-500">Đánh giá chi tiết</label>
+                        <textarea name="notes" class="form-control" rows="6"
+                                  placeholder="Nhập đánh giá chi tiết về ứng viên: điểm mạnh, điểm yếu, kỹ năng, kiến thức chuyên môn, khả năng phù hợp với vị trí..."></textarea>
+                        <div class="form-text">Ghi chú đánh giá sẽ giúp HR đưa ra quyết định cuối cùng</div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="col-12 mt-4 pt-3 border-top">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a th:href="@{/admin/interviews}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-2"></i>Lưu kết quả
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <style>
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+
+        .card {
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .card-option .form-check-input {
+            display: none;
+        }
+
+        .card-option .form-check-input:checked + .form-check-label .card {
+            border-width: 2px;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .btn {
+            border-radius: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            font-weight: 500;
+        }
+
+        .form-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        .fw-600 {
+            font-weight: 600;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.375rem 0.75rem;
+        }
+    </style>
+</section>
+</body>
+</html>

@@ -10,8 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+    List<User> findByAccount_Role(jms.entity.enums.Role role);
 
     @Query("""
         SELECT u FROM User u
