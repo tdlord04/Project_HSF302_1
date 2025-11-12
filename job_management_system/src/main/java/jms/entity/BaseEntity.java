@@ -32,4 +32,12 @@ public abstract class BaseEntity {
 
     @Column(name = "delete_at")
     private Instant deletedAt; // Thời điểm xóa mềm
+
+    void update() {
+        updatedAt = Instant.now();
+    }
+
+    void softDelete() {
+        deletedAt = Instant.now();
+    }
 }
