@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/home}">
+<head>
+    <title>Chi tiết đơn ứng tuyển</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/applications}">Đơn ứng tuyển</a></li>
+                <li class="breadcrumb-item active">Chi tiết</li>
+            </ol>
+        </nav>
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">
+                <i class="bi bi-file-text me-2"></i>Chi tiết đơn ứng tuyển
+            </h1>
+            <a th:href="@{/applications}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Quay lại
+            </a>
+        </div>
+
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Kiểm tra application có tồn tại không -->
+        <div th:if="${application == null}">
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>Không tìm thấy đơn ứng tuyển.
+            </div>
+        </div>
+
+        <div class="row" th:if="${application != null}">
+            <!-- Thông tin chính -->
+            <div class="col-md-8">
+                <!-- Thông tin ứng viên -->
+                <div class="card mb-4" th:if="${application.candidate != null}">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-person me-2"></i>Thông tin ứng viên
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td width="40%"><strong>Họ và tên:</strong></td>
+                                        <td>
+                                            <a th:href="@{/candidates/{id}(id=${application.candidate?.id})}"
+                                               th:text="${application.candidate?.fullName ?: 'N/A'}"
+                                               class="text-decoration-none"></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Email:</strong></td>
+                                        <td th:text="${application.candidate?.email ?: 'N/A'}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Điện thoại:</strong></td>
+                                        <td th:text="${application.candidate?.phone ?: 'N/A'}"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td width="40%"><strong>Kinh nghiệm:</strong></td>
+                                        <td>
+                                            <span th:if="${application.candidate?.experienceYears != null}"
+                                                  th:text="${application.candidate.experienceYears} + ' năm'"></span>
+                                            <span th:if="${application.candidate?.experienceYears == null}">N/A</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Học vấn:</strong></td>
+                                        <td th:text="${application.candidate?.education ?: 'N/A'}"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thông báo khi candidate null -->
+                <div class="card mb-4" th:if="${application.candidate == null}">
+                    <div class="card-header bg-warning">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Thông tin ứng viên
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-warning mb-0">
+                            <i class="bi bi-info-circle me-2"></i>Không có thông tin ứng viên cho đơn ứng tuyển này.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Thông tin tin tuyển dụng -->
+                <div class="card mb-4" th:if="${application.jobPosting != null}">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-briefcase me-2"></i>Thông tin tin tuyển dụng
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td width="40%"><strong>Vị trí:</strong></td>
+                                        <td th:text="${application.jobPosting?.jobTitle ?: 'N/A'}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Địa điểm:</strong></td>
+                                        <td th:text="${application.jobPosting?.location ?: 'N/A'}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Mức lương:</strong></td>
+                                        <td th:text="${application.jobPosting?.salaryRange ?: 'Thương lượng'}"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td width="40%"><strong>Công ty:</strong></td>
+                                        <td th:text="${application.jobPosting?.company?.name ?: 'N/A'}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Trạng thái:</strong></td>
+                                        <td>
+                                            <span th:if="${application.jobPosting?.status != null}"
+                                                  th:text="${application.jobPosting.status}"
+                                                  class="badge bg-secondary"></span>
+                                            <span th:if="${application.jobPosting?.status == null}"
+                                                  class="badge bg-secondary">N/A</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thông báo khi jobPosting null -->
+                <div class="card mb-4" th:if="${application.jobPosting == null}">
+                    <div class="card-header bg-warning">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Thông tin tin tuyển dụng
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-warning mb-0">
+                            <i class="bi bi-info-circle me-2"></i>Không có thông tin tin tuyển dụng cho đơn ứng tuyển này.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Ghi chú -->
+                <div class="card mb-4" th:if="${application.note}">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-chat-text me-2"></i>Ghi chú
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0" th:text="${application.note}"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-md-4">
+                <!-- Thông tin đơn ứng tuyển -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-info-circle me-2"></i>Thông tin đơn ứng tuyển
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless table-sm">
+                            <tr>
+                                <td><strong>Trạng thái:</strong></td>
+                                <td>
+                                    <!-- Sửa lỗi cú pháp th:classappend -->
+                                    <span th:text="${application.status?.name() ?: application.status}"
+                                          class="badge"
+                                          th:classappend="${application.status?.name() == 'APPLIED'} ? 'bg-primary' :
+                                                          (${application.status?.name() == 'INTERVIEWING'} ? 'bg-warning' :
+                                                          (${application.status?.name() == 'REJECTED'} ? 'bg-danger' :
+                                                          (${application.status?.name() == 'OFFERED'} ? 'bg-success' :
+                                                          (${application.status?.name() == 'HIRED'} ? 'bg-info' : 'bg-secondary'))))">
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nguồn:</strong></td>
+                                <td th:text="${application.source ?: 'N/A'}"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ngày ứng tuyển:</strong></td>
+                                <td th:text="${#temporals.format(application.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cập nhật:</strong></td>
+                                <td th:text="${#temporals.format(application.updatedAt, 'dd/MM/yyyy HH:mm')}"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>ID:</strong></td>
+                                <td class="text-muted" th:text="${application.id}"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Cập nhật trạng thái -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-arrow-repeat me-2"></i>Cập nhật trạng thái
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/applications/{id}/status(id=${application.id})}" method="post">
+                            <div class="mb-3">
+                                <select name="status" class="form-select" required>
+                                    <option th:each="status : ${allStatuses}"
+                                            th:value="${status}"
+                                            th:text="${status}"
+                                            th:selected="${status == application.status}">
+                                    </option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-check-circle me-1"></i>Cập nhật
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Thêm ghi chú -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-pencil me-2"></i>Thêm ghi chú
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/applications/{id}/note(id=${application.id})}" method="post">
+                            <div class="mb-3">
+                                <textarea name="note" class="form-control" rows="3"
+                                          placeholder="Thêm ghi chú cho đơn ứng tuyển này..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-save me-1"></i>Lưu ghi chú
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
