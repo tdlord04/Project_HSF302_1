@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/home}">
+<head>
+    <title>Chi tiết ứng viên</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/candidates}">Quản lý ứng viên</a></li>
+                <li class="breadcrumb-item active" th:text="${candidate.fullName}"></li>
+            </ol>
+        </nav>
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">
+                <i class="bi bi-person-badge me-2"></i>Chi tiết ứng viên
+            </h1>
+            <div>
+                <a th:href="@{/candidates/{id}/edit(id=${candidate.id})}" class="btn btn-warning me-2">
+                    <i class="bi bi-pencil me-1"></i>Chỉnh sửa
+                </a>
+                <a th:href="@{/candidates}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Quay lại
+                </a>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="row">
+            <!-- Thông tin chính -->
+            <div class="col-md-8">
+                <!-- Thông tin cơ bản -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-info-circle me-2"></i>Thông tin cơ bản
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td width="40%"><strong>Họ và tên:</strong></td>
+                                        <td th:text="${candidate.fullName}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Email:</strong></td>
+                                        <td th:text="${candidate.email}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Điện thoại:</strong></td>
+                                        <td th:text="${candidate.phone} ?: 'N/A'" class="${candidate.phone ? '' : 'text-muted'}"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td width="40%"><strong>Kinh nghiệm:</strong></td>
+                                        <td>
+                                            <span th:if="${candidate.experienceYears > 0}"
+                                                  th:text="${candidate.experienceYears} + ' năm'"
+                                                  class="badge bg-info"></span>
+                                            <span th:if="${candidate.experienceYears == 0}" class="text-muted">Mới tốt nghiệp</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Học vấn:</strong></td>
+                                        <td th:text="${candidate.education} ?: 'N/A'" class="${candidate.education ? '' : 'text-muted'}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Công ty cũ:</strong></td>
+                                        <td th:text="${candidate.previousCompany} ?: 'N/A'" class="${candidate.previousCompany ? '' : 'text-muted'}"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kỹ năng -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-tools me-2"></i>Kỹ năng
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${not #lists.isEmpty(candidate.skills)}">
+                            <span th:each="skill : ${candidate.skills}"
+                                  class="badge bg-primary me-2 mb-2 p-2">
+                                <i class="bi bi-check-circle me-1"></i>
+                                <span th:text="${skill.name}"></span>
+                            </span>
+                        </div>
+                        <div th:if="${#lists.isEmpty(candidate.skills)}" class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>Chưa có kỹ năng nào được thêm vào.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mục tiêu nghề nghiệp -->
+                <div class="card mb-4" th:if="${candidate.careerGoal}">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-bullseye me-2"></i>Mục tiêu nghề nghiệp
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0" th:text="${candidate.careerGoal}"></p>
+                    </div>
+                </div>
+
+                <!-- Chứng chỉ -->
+                <div class="card mb-4" th:if="${candidate.certificates}">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-award me-2"></i>Chứng chỉ
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0" th:text="${candidate.certificates}"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar - Thông tin bổ sung -->
+            <div class="col-md-4">
+                <!-- Thông tin hệ thống -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-clock-history me-2"></i>Thông tin hệ thống
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless table-sm">
+                            <tr>
+                                <td><strong>Ngày tạo:</strong></td>
+                                <td th:text="${#temporals.format(candidate.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cập nhật:</strong></td>
+                                <td th:text="${#temporals.format(candidate.updatedAt, 'dd/MM/yyyy HH:mm')}"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>ID:</strong></td>
+                                <td class="text-muted" th:text="${candidate.id}"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Thống kê ứng tuyển -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-file-text me-2"></i>Thống kê ứng tuyển
+                        </h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="border rounded p-3 bg-light">
+                                    <h4 class="text-primary mb-1" th:text="${applicationCount} ?: 0"></h4>
+                                    <small class="text-muted">Đơn ứng tuyển</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="border rounded p-3 bg-light">
+                                    <h4 class="text-success mb-1" th:text="${documentCount} ?: 0"></h4>
+                                    <small class="text-muted">Tài liệu</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-lightning me-2"></i>Thao tác nhanh
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/applications?candidateId={id}(id=${candidate.id})}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-file-text me-1"></i>Xem đơn ứng tuyển
+                            </a>
+                            <a th:href="@{/documents?candidateId={id}(id=${candidate.id})}" class="btn btn-outline-info btn-sm">
+                                <i class="bi bi-file-earmark me-1"></i>Quản lý tài liệu
+                            </a>
+                            <form th:action="@{/candidates/{id}/delete(id=${candidate.id})}" method="post" class="d-grid">
+                                <button type="submit" class="btn btn-outline-danger btn-sm"
+                                        onclick="return confirm('Bạn có chắc muốn xóa ứng viên này? Hành động này không thể hoàn tác.')">
+                                    <i class="bi bi-trash me-1"></i>Xóa ứng viên
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
