@@ -15,13 +15,13 @@
             </h4>
         </div>
 
-        <a th:href="@{/admin/dashboard}"
-           th:classappend="${currentPath.startsWith('/admin/dashboard')} ? 'active'">
+        <a th:href="@{/}"
+           th:classappend="${currentPath.startsWith('/')} ? 'active'">
             <i class="bi bi-speedometer2 me-2"></i> Dashboard
         </a>
 
-        <a th:href="@{/admin/users}"
-           th:classappend="${currentPath.startsWith('/JobMS/admin/users')} ? 'active'">
+        <a th:href="@{/manager/users}"
+           th:classappend="${currentPath.startsWith('/JobMS/manager/users')} ? 'active'">
             <i class="bi bi-people-fill me-2"></i> Quản lý người dùng
         </a>
 
@@ -30,8 +30,8 @@
             <i class="bi bi-building me-2"></i> Quản lý công ty
         </a>
 
-        <a th:href="@{/#}"
-           th:classappend="${currentPath.startsWith('/#')} ? 'active'">
+        <a th:href="@{/recruitment-report}"
+           th:classappend="${currentPath.startsWith('/JobMS/recruitment-report')} ? 'active'">
             <i class="bi bi-clipboard2-check me-2"></i> Tin tuyển dụng
         </a>
 

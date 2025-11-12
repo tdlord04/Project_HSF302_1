@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/home}" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title layout:title="Danh sách tin tuyển dụng">Danh sách tin tuyển dụng</title>
+</head>
+<body class="p-4 bg-light">
+<section layout:fragment="content">
+    <div class="container mt-5 mb-5">
+
+        <h2 class="mb-4 text-center">📋 Danh sách tin tuyển dụng</h2>
+
+        <div style="display: flex; gap: 5px">
+            <a th:href="@{'/recruitment-report'}" class="btn btn-primary" style="width: 100px">Báo cáo</a>
+            <a th:href="@{'/job-postings/form/create'}" class="btn btn-primary" style="width: 100px">Tạo mới</a>
+        </div>
+
+        <!-- FORM LỌC -->
+        <form method="get" th:action="@{/job-postings}" class="row g-2 align-items-end mb-4">
+            <div class="col-md-2">
+                <label class="form-label">Chức danh</label>
+                <input type="text" name="title" th:value="${titleFilter}" class="form-control">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Địa điểm</label>
+                <input type="text" name="location" th:value="${locationFilter}" class="form-control">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Mức lương</label>
+                <input type="text" name="salaryRange" th:value="${salaryRangeFilter}" class="form-control">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Công ty</label>
+                <input type="text" name="companyName" th:value="${companyNameFilter}" class="form-control">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Trạng thái</label>
+                <select name="status" class="form-select">
+                    <option value="">--Trạng thái--</option>
+                    <option th:each="st : ${statuses}"
+                            th:value="${st}"
+                            th:text="${st}"
+                            th:selected="${st == statusFilter}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-50">Lọc</button>
+                <a th:href="@{/job-postings}" class="btn btn-secondary w-50">Xóa</a>
+            </div>
+        </form>
+
+        <!-- BẢNG DANH SÁCH -->
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered align-middle text-center">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Chức danh</th>
+                    <th>Địa điểm</th>
+                    <th>Mức lương</th>
+                    <th>Trạng thái</th>
+                    <th>Công ty</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="job : ${postings}">
+                    <td th:text="${job.id}"></td>
+                    <td th:text="${job.jobTitle}"></td>
+                    <td th:text="${job.location}"></td>
+                    <td th:text="${job.salaryRange}"></td>
+                    <td>
+                        <span class="badge bg-info" th:text="${job.status}"></span>
+                    </td>
+                    <td th:text="${job.companyName}"></td>
+                    <td>
+                        <a th:href="@{'/job-postings/' + ${job.id}}" class="btn btn-sm btn-outline-primary">Xem</a>
+                        <a th:href="@{'/job-postings/delete/' + ${job.id}}"
+                           class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Bạn có chắc muốn xóa tin này không?')">Xóa</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(postings)}">
+                    <td colspan="7" class="text-muted">Không tìm thấy tin tuyển dụng nào.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="store-filter clearfix mt-4 text-center" th:if="${totalPages > 0}">
+    <span class="store-qty d-block mb-2 text-muted">
+        Hiển thị
+        <b th:text="${(currentPage - 1) * numberPerPage + 1} + '-' + ${(currentPage - 1) * numberPerPage + postings.size()}"></b>
+        trong tổng số
+        <b th:text="${totalProducts}"></b> công việc
+    </span>
+
+            <ul class="pagination justify-content-center mb-3">
+                <!-- Trang trước -->
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/job-postings(page=${currentPage - 1}, size=${numberPerPage})}">&laquo;</a>
+                </li>
+
+                <!-- Trường hợp ít trang -->
+                <th:block th:if="${totalPages <= 3}">
+                    <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}"
+                        th:classappend="${page == currentPage} ? 'active'">
+                        <a class="page-link" th:text="${page}"
+                           th:href="@{/job-postings(page=${page}, size=${numberPerPage})}"></a>
+                    </li>
+                </th:block>
+
+                <!-- Trường hợp nhiều trang -->
+                <th:block th:if="${totalPages > 3}">
+                    <!-- Trang đầu -->
+                    <li class="page-item" th:classappend="${currentPage == 1} ? 'active'">
+                        <a class="page-link" th:href="@{/job-postings(page=1, size=${numberPerPage})}">1</a>
+                    </li>
+
+                    <!-- Dấu ... trái -->
+                    <li class="page-item disabled" th:if="${currentPage > 3}">
+                        <span class="page-link">...</span>
+                    </li>
+
+                    <!-- Các trang giữa -->
+                    <li class="page-item"
+                        th:each="page : ${#numbers.sequence((currentPage > 2 ? currentPage - 1 : 2), (currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1))}"
+                        th:if="${page > 1 && page < totalPages}"
+                        th:classappend="${page == currentPage} ? 'active'">
+                        <a class="page-link" th:text="${page}"
+                           th:href="@{/job-postings(page=${page}, size=${numberPerPage})}"></a>
+                    </li>
+
+                    <!-- Dấu ... phải -->
+                    <li class="page-item disabled" th:if="${currentPage < totalPages - 2}">
+                        <span class="page-link">...</span>
+                    </li>
+
+                    <!-- Trang cuối -->
+                    <li class="page-item" th:classappend="${currentPage == totalPages} ? 'active'">
+                        <a class="page-link" th:text="${totalPages}"
+                           th:href="@{/job-postings(page=${totalPages}, size=${numberPerPage})}"></a>
+                    </li>
+                </th:block>
+
+                <!-- Trang sau -->
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/job-postings(page=${currentPage + 1}, size=${numberPerPage})}">&raquo;</a>
+                </li>
+            </ul>
+
+            <!-- Ô nhập & dropdown (giữ nguyên phần cũ) -->
+            <div class="d-flex justify-content-center align-items-center flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <label for="jumpPage" class="text-muted mb-0">Đi đến trang:</label>
+                    <input id="jumpPage" type="number" min="1" class="form-control form-control-sm"
+                           style="width: 80px; text-align:center;" placeholder="Số trang">
+                    <button class="btn btn-sm btn-primary" id="jumpBtn">Đi</button>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 ms-3">
+                    <label for="pageSizeSelect" class="text-muted mb-0">Hiển thị:</label>
+                    <select id="pageSizeSelect" class="form-select form-select-sm" style="width: 90px;">
+                        <option th:value="2" th:selected="${numberPerPage == 2}">2</option>
+                        <option th:value="10" th:selected="${numberPerPage == 10}">10</option>
+                        <option th:value="25" th:selected="${numberPerPage == 25}">25</option>
+                        <option th:value="50" th:selected="${numberPerPage == 50}">50</option>
+                        <option th:value="100" th:selected="${numberPerPage == 100}">100</option>
+                    </select>
+                    <span class="text-muted">dòng / trang</span>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <style>
+        .pagination {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .page-item .page-link {
+            border-radius: 8px;
+            min-width: 40px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+        }
+
+        .page-item .page-link:hover {
+            background-color: #f2f2f2;
+            color: #007bff;
+        }
+
+        #pageSizeSelect {
+            cursor: pointer;
+        }
+
+    </style>
+
+    <script>
+        document.getElementById("jumpBtn").addEventListener("click", function() {
+            const input = document.getElementById("jumpPage");
+            let page = parseInt(input.value);
+            if (isNaN(page) || page < 1) page = 1; // luôn >= 1
+            const size = document.getElementById("pageSizeSelect").value;
+            window.location.href = `http://localhost:8080/JobMS/job-postings?page=${page}&size=${size}`;
+        });
+
+        document.getElementById("jumpPage").addEventListener("keydown", function(e) {
+            if (e.key === "Enter") document.getElementById("jumpBtn").click();
+        });
+
+        document.getElementById("pageSizeSelect").addEventListener("change", function() {
+            const size = this.value;
+            window.location.href = `http://localhost:8080/JobMS/job-postings?page=1&size=${size}`;
+        });
+    </script>
+
+
+
+    <script src="https://cdn.ckeditor.com/4.21.0/standard-all/ckeditor.js"></script>
+    <script>
+        CKEDITOR.config.notification = false;
+        CKEDITOR.replace('descEditor', {
+            extraPlugins: 'autogrow',
+            autoGrow_minHeight: 120,
+            autoGrow_maxHeight: 600,
+            removePlugins: 'resize',
+            contentsCss: [
+                'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
+                'body { font-size: 14px; color: #212529; line-height: 1.5; }'
+            ]
+        });
+
+        CKEDITOR.replace('reqEditor', {
+            extraPlugins: 'autogrow',
+            autoGrow_minHeight: 100,
+            autoGrow_maxHeight: 600,
+            removePlugins: 'resize',
+            contentsCss: [
+                'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
+                'body { font-size: 14px; color: #212529; line-height: 1.5; }'
+            ]
+        });
+    </script>
+</section>
+
+
+</body>
+</html>

@@ -17,20 +17,22 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByAccount_Role(jms.entity.enums.Role role);
 
     @Query("""
-        SELECT u FROM User u
-        JOIN u.account a
-        JOIN u.company c
-        WHERE u.deletedAt IS NULL
-          AND (:role IS NULL OR a.role = :role)
-          AND (:status IS NULL OR a.status = :status)
-          AND (:keyword IS NULL OR
-               LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
-               LOWER(a.email) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
-               LOWER(u.phone) LIKE LOWER(CONCAT('%', :keyword, '%')))
-    """)
+                SELECT u FROM User u
+                JOIN u.account a
+                JOIN u.company c
+                WHERE u.deletedAt IS NULL
+                  AND (:role IS NULL OR a.role = :role)
+                  AND (:status IS NULL OR a.status = :status)
+                  AND (:keyword IS NULL OR
+                       LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
+                       LOWER(a.email) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
+                       LOWER(u.phone) LIKE LOWER(CONCAT('%', :keyword, '%')))
+            """)
     Page<User> findAllFiltered(
             @Param("role") Role role,
             @Param("status") UserStatus status,
             @Param("keyword") String keyword,
             Pageable pageable);
+
+    Optional<User> findByIdAndDeletedAtIsNull(Long id);
 }

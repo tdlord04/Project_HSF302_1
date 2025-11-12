@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/home}" lang="vi">
+<head>
+    <title layout:title="Tạo người dùng">Tạo người dùng</title>
+</head>
+
+<body>
+<section layout:fragment="content">
+    <div class="container my-5"> <div class="card shadow-sm"> <div class="card-header bg-primary text-white"> <h3 class="mb-0">Tạo người dùng mới</h3>
+    </div>
+        <div class="card-body">
+
+            <form th:action="@{/manager/users/create}" th:object="${userAccountDTO}" method="post" class="needs-validation" novalidate>
+
+                <h5 class="mb-3 text-primary border-bottom pb-2">Thông tin tài khoản</h5>
+
+                <div class="row g-3 mb-4"> <div class="col-md-6">
+                    <label for="username" class="form-label fw-bold">Tên đăng nhập <span class="text-danger">*</span></label>
+                    <input type="text" th:field="*{username}" id="username" class="form-control" placeholder="username" required/>
+                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                </div>
+
+                    <div class="col-md-6">
+                        <label for="email" class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+                        <input type="email" th:field="*{email}" id="email" class="form-control" placeholder="email@example.com" required/>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="password" class="form-label fw-bold">Mật khẩu <span class="text-danger">*</span></label>
+                        <input type="password" th:field="*{password}" id="password" class="form-control" placeholder="Nhập mật khẩu" required/>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="role" class="form-label fw-bold">Vai trò <span class="text-danger">*</span></label>
+                        <select th:field="*{role}" id="role" class="form-select" required>
+                            <option value="" disabled selected>-- Chọn Vai trò --</option>
+                            <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option>
+                        </select>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="status" class="form-label fw-bold">Trạng thái <span class="text-danger">*</span></label>
+                        <select th:field="*{status}" id="status" class="form-select" required>
+                            <option value="" disabled selected>-- Chọn Trạng thái --</option>
+                            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+                        </select>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></div>
+                    </div>
+
+                </div>
+
+                <h5 class="mb-3 mt-4 text-primary border-bottom pb-2">Thông tin cá nhân & Công ty</h5>
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-md-6">
+                        <label for="fullName" class="form-label fw-bold">Họ tên</label>
+                        <input type="text" th:field="*{fullName}" id="fullName" class="form-control" placeholder="Họ và tên"/>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="phone" class="form-label fw-bold">Số điện thoại</label>
+                        <input type="text" th:field="*{phone}" id="phone" class="form-control" placeholder="090xxxxxxx"/>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="companyId" class="form-label fw-bold">Công ty</label>
+                        <select th:field="*{companyId}" id="companyId" class="form-select">
+                            <option value="" disabled selected>-- Chọn công ty --</option>
+                            <option th:each="c : ${companies}" th:value="${c.id}" th:text="${c.name}"></option>
+                        </select>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('companyId')}" th:errors="*{companyId}"></div>
+                    </div>
+
+                </div>
+
+                <div class="mb-4">
+                    <label for="address" class="form-label fw-bold">Địa chỉ</label>
+                    <input type="text" th:field="*{address}" id="address" class="form-control" placeholder="Địa chỉ liên hệ"/>
+                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
+                </div>
+
+                <div class="d-flex justify-content-end pt-3 border-top">
+                    <a th:href="@{/manager/users}" class="btn btn-outline-secondary me-3"><i class="bi bi-x-lg me-1"></i> Hủy</a> <button type="submit" class="btn btn-success"><i class="bi bi-save me-1"></i> Lưu người dùng</button> </div>
+            </form>
+
+        </div>
+    </div>
+
+    </div>
+</section>
+</body>
+</html>
