@@ -33,22 +33,23 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/manager/**").hasAnyRole("MANAGER", "ADMIN")
-                        .requestMatchers("/hr/**").hasAnyRole("HR", "ADMIN")
-                        .requestMatchers("/interview/**").hasAnyRole("INTERVIEWER", "ADMIN")
-                        .anyRequest().authenticated()
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/manager/**").hasAnyRole("MANAGER", "ADMIN")
+//                        .requestMatchers("/hr/**").hasAnyRole("HR", "ADMIN")
+//                        .requestMatchers("/interview/**").hasAnyRole("INTERVIEWER", "ADMIN")
+                        .anyRequest().permitAll()
                 )
-                .formLogin(form -> form
-                        .loginPage("/auth/login")             // GET login page
-                        .loginProcessingUrl("/auth/login")    // POST action
-                        .successHandler((req, res, auth) -> {
-                            String contextPath = req.getContextPath();
-                            res.sendRedirect(contextPath + "/");
-                        })
-                        .failureUrl("/auth/login?error=true")
-                        .permitAll()
-                )
+//                .formLogin(form -> form
+//                        .loginPage("/auth/login")             // GET login page
+//                        .loginProcessingUrl("/auth/login")    // POST action
+//                        .successHandler((req, res, auth) -> {
+//                            String contextPath = req.getContextPath();
+//                            res.sendRedirect(contextPath + "/");
+//                        })
+//                        .failureUrl("/auth/login?error=true")
+//                        .permitAll()
+//                )
+                .formLogin(form -> form.disable())
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
                         .logoutSuccessUrl("/auth/login?logout=true")
