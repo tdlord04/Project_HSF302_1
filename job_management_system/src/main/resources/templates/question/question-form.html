@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/home}" lang="vi">
+<head>
+	<meta charset="UTF-8"/>
+	<title layout:title="${question.id != null ? 'Sửa câu hỏi' : 'Thêm câu hỏi'}">Câu hỏi</title>
+</head>
+<body class="bg-light">
+<section layout:fragment="content">
+	<div class="container mt-4">
+		<div class="row justify-content-center">
+			<div class="col-lg-8">
+				<div class="card shadow-sm">
+					<div class="card-header bg-primary text-white">
+						<h5 class="mb-0" th:text="${question.id == null ? '🆕 Thêm câu hỏi' : '✏️ Sửa câu hỏi'}">Câu hỏi</h5>
+					</div>
+					<div class="card-body">
+						<form th:action="${question.id == null} ? @{/questions/create} : @{'/questions/edit/' + ${question.id}}"
+						      th:object="${question}" method="post">
+
+							<div class="mb-3">
+								<label for="questionText" class="form-label">Nội dung câu hỏi</label>
+								<textarea id="questionText" th:field="*{questionText}" class="form-control" rows="5" required
+								          placeholder="Nhập nội dung câu hỏi..."></textarea>
+								<div class="form-text">Mẹo: Diễn đạt rõ ràng, ví dụ và tiêu chí đánh giá (nếu có).</div>
+							</div>
+
+							<div class="row">
+								<div class="col-md-6 mb-3">
+									<label for="questionType" class="form-label">Loại câu hỏi</label>
+									<select id="questionType" th:field="*{questionType}" class="form-select">
+										<option value="">-- Chọn loại --</option>
+										<option value="TEXT">TEXT</option>
+										<option value="MULTIPLE_CHOICE">MULTIPLE_CHOICE</option>
+										<option value="ESSAY">ESSAY</option>
+										<option value="CODING">CODING</option>
+									</select>
+								</div>
+								<div class="col-md-6 mb-3">
+									<label for="correctAnswer" class="form-label">Đáp án đúng (nếu có)</label>
+									<input type="text" id="correctAnswer" th:field="*{correctAnswer}" class="form-control"
+									       placeholder="Nhập đáp án đúng"/>
+								</div>
+							</div>
+
+							<div class="d-flex justify-content-end">
+								<a th:href="@{/questions}" class="btn btn-outline-secondary me-2">Hủy</a>
+								<button type="submit" class="btn btn-primary" th:text="${question.id == null ? 'Tạo mới' : 'Cập nhật'}">Lưu</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+</body>
+</html>
+
+
