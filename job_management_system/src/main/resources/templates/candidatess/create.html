@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/home}">
+<head>
+    <title>Tạo ứng viên mới</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/candidates}">Quản lý ứng viên</a></li>
+                <li class="breadcrumb-item active">Tạo ứng viên mới</li>
+            </ol>
+        </nav>
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">
+                <i class="bi bi-person-plus me-2"></i>Tạo ứng viên mới
+            </h1>
+            <a th:href="@{/candidates}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Quay lại
+            </a>
+        </div>
+
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Create Form -->
+        <div class="card">
+            <div class="card-body">
+                <form th:action="@{/candidates/create}" th:object="${candidate}" method="post" class="needs-validation" novalidate>
+                    <div class="row">
+                        <!-- Thông tin cơ bản -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3 text-primary">
+                                <i class="bi bi-info-circle me-2"></i>Thông tin cơ bản
+                            </h5>
+
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required>
+                                <div class="invalid-feedback">Vui lòng nhập họ tên ứng viên.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                <div class="invalid-feedback">Vui lòng nhập email hợp lệ.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" id="phone" th:field="*{phone}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="education" class="form-label">Trình độ học vấn</label>
+                                <input type="text" class="form-control" id="education" th:field="*{education}" placeholder="Ví dụ: Đại học, Cao đẳng...">
+                            </div>
+                        </div>
+
+                        <!-- Kinh nghiệm & Kỹ năng -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3 text-primary">
+                                <i class="bi bi-briefcase me-2"></i>Kinh nghiệm & Kỹ năng
+                            </h5>
+
+                            <div class="mb-3">
+                                <label for="experienceYears" class="form-label">Số năm kinh nghiệm</label>
+                                <input type="number" class="form-control" id="experienceYears" th:field="*{experienceYears}" min="0" max="50">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="previousCompany" class="form-label">Công ty gần nhất</label>
+                                <input type="text" class="form-control" id="previousCompany" th:field="*{previousCompany}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Kỹ năng</label>
+                                <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                    <div th:each="skill : ${allSkills}" class="form-check">
+                                        <input class="form-check-input" type="checkbox" th:value="${skill.id}"
+                                               th:id="'skill_' + ${skill.id}" name="skillIds">
+                                        <label class="form-check-label" th:for="'skill_' + ${skill.id}" th:text="${skill.name}"></label>
+                                    </div>
+                                    <div th:if="${#lists.isEmpty(allSkills)}" class="text-muted">
+                                        Chưa có kỹ năng nào. <a th:href="@{/skills}">Thêm kỹ năng mới</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mục tiêu nghề nghiệp & Chứng chỉ -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h5 class="mb-3 text-primary">
+                                <i class="bi bi-award me-2"></i>Thông tin bổ sung
+                            </h5>
+
+                            <div class="mb-3">
+                                <label for="careerGoal" class="form-label">Mục tiêu nghề nghiệp</label>
+                                <textarea class="form-control" id="careerGoal" th:field="*{careerGoal}" rows="3"
+                                          placeholder="Mô tả mục tiêu và định hướng nghề nghiệp..."></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="certificates" class="form-label">Chứng chỉ</label>
+                                <textarea class="form-control" id="certificates" th:field="*{certificates}" rows="2"
+                                          placeholder="Các chứng chỉ đã đạt được (phân cách bằng dấu phẩy)..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a th:href="@{/candidates}" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle me-1"></i>Hủy bỏ
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle me-1"></i>Tạo ứng viên
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('.needs-validation');
+
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    });
+</script>
+
+</body>
+</html>
