@@ -86,7 +86,6 @@ public class UserAccountServiceImpl implements UserAccountService, UserDetailsSe
                 .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy tài khoản: " + username));
         log.info("UserDetails : {}", account);
 
-        // Thêm ROLE_ prefix nếu bạn dùng .hasRole("ADMIN") trong SecurityConfig
         UserDetails u = org.springframework.security.core.userdetails.User.builder()
                 .username(account.getEmail())
                 .password(account.getPasswordHash())

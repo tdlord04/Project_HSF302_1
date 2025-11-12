@@ -2,18 +2,24 @@ package jms.controller.users;
 
 import jakarta.validation.Valid;
 import jms.dto.UserAccountDTO;
+import jms.entity.Account;
 import jms.entity.enums.Role;
 import jms.entity.enums.UserStatus;
+import jms.repository.AccountRepository;
 import jms.repository.CompanyRepository;
 import jms.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping(value = {"/manager/users"})
@@ -22,6 +28,7 @@ public class AdminUserController {
 
     private final UserAccountService userAccountService;
     private final CompanyRepository companyRepository;
+    private final AccountRepository accountRepository;
 
     @GetMapping
     public String listUsers(
@@ -50,9 +57,13 @@ public class AdminUserController {
     }
 
     @GetMapping("/create")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        String email = userDetails.getUsername(); // chính là email đăng nhập
+        Account current = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         model.addAttribute("userAccountDTO", new UserAccountDTO());
-        model.addAttribute("roles", Role.values());
+        model.addAttribute("roles", current.getRole().getAssignableRoles());
         model.addAttribute("statuses", UserStatus.values());
         model.addAttribute("companies", companyRepository.findAll()); // nếu có danh sách công ty
         return "users/user-form";
@@ -62,10 +73,15 @@ public class AdminUserController {
     public String createUser(
             @Valid @ModelAttribute("userAccountDTO") UserAccountDTO dto,
             BindingResult bindingResult,
-            Model model) {
+            Model model,
+            @AuthenticationPrincipal UserDetails userDetails) {
 
+        String email = userDetails.getUsername(); // chính là email đăng nhập
+        Account current = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         if (bindingResult.hasErrors()) {
-            model.addAttribute("roles", Role.values());
+            List<Role> assignable = current.getRole().getAssignableRoles();
+            model.addAttribute("roles", assignable);
             model.addAttribute("statuses", UserStatus.values());
             model.addAttribute("companies", companyRepository.findAll());
             return "users/user-form";
