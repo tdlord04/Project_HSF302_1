@@ -15,6 +15,8 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 
     List<Document> findByCandidateId(Long candidateId);
 
+    void deleteByCandidateId(Long candidateId);
+
     Optional<Document> findByCandidateIdAndDocumentName(Long candidateId, String documentName);
 
     @Query("SELECT d FROM Document d WHERE d.candidate.id = :candidateId AND d.fileType = :fileType")
@@ -23,5 +25,4 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 
     boolean existsByCandidateIdAndDocumentName(Long candidateId, String documentName);
 
-    void deleteByCandidateId(Long candidateId);
 }

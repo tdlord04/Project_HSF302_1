@@ -31,4 +31,12 @@ public interface CandidateProfileRepository extends JpaRepository<CandidateProfi
     List<CandidateProfile> findByExperienceRange(@Param("minExp") Integer minExp, @Param("maxExp") Integer maxExp);
 
     boolean existsByEmail(String email);
+
+    // THÊM: Phương thức để fetch candidate cùng với skills
+    @Query("SELECT DISTINCT cp FROM CandidateProfile cp LEFT JOIN FETCH cp.skills")
+    List<CandidateProfile> findAllWithSkills();
+
+    // THÊM: Phương thức để fetch candidate với skills có phân trang
+    @Query("SELECT cp FROM CandidateProfile cp LEFT JOIN FETCH cp.skills")
+    Page<CandidateProfile> findAllWithSkills(Pageable pageable);
 }
