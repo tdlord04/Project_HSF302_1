@@ -20,10 +20,20 @@
             <i class="bi bi-speedometer2 me-2"></i> Dashboard
         </a>
 
-        <a th:href="@{/manager/users}"
-           th:classappend="${currentPath.startsWith('/JobMS/manager/users')} ? 'active'">
-            <i class="bi bi-people-fill me-2"></i> Quản lý người dùng
+        <a data-bs-toggle="collapse" href="#userSubmenu"
+           th:classappend="${currentPath == '/manager/users' or currentPath == '/admin/logs'} ? 'active'">
+            <i class="bi bi-file-earmark-person me-2"></i> Người dùng và lịch sử
         </a>
+        <div class="collapse submenu" id="userSubmenu">
+            <a th:href="@{/users}"
+               th:classappend="${currentPath.startsWith('/JobMS/users')} ? 'active'">
+                <i class="bi bi-people me-2"></i> Quản lý người dùng
+            </a>
+            <a th:href="@{/admin/logs}"
+               th:classappend="${currentPath == '/admin/logs'} ? 'active'">
+                <i class="bi bi-file-earmark-text me-2"></i> Đơn ứng tuyển
+            </a>
+        </div>
 
         <a th:href="@{/questions}"
            th:classappend="${currentPath.startsWith('/questions')} ? 'active'">
@@ -34,6 +44,11 @@
         <a th:href="@{/recruitment-report}"
            th:classappend="${currentPath == '/recruitment-report'} ? 'active'">
             <i class="bi bi-clipboard2-check me-2"></i> Tin tuyển dụng
+        </a>
+
+        <a th:href="@{/interviews}"
+           th:classappend="${currentPath == '/interviews'} ? 'active'">
+            <i class="bi bi-clipboard2-check me-2"></i> Phỏng vấn
         </a>
 
         <!-- Luồng 3 - Quản lý hồ sơ & Ứng tuyển -->

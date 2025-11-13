@@ -61,7 +61,7 @@
         <!-- Update Result Form -->
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4">
-                <form th:action="@{/admin/interviews/update-result/{id}(id=${interview.id})}"
+                <form th:action="@{/templates/interviews/update-result/{id}(id=${interview.id})}"
                       method="post" class="row g-3">
 
                     <!-- Result Selection -->
@@ -130,7 +130,7 @@
                     <!-- Action buttons -->
                     <div class="col-12 mt-4 pt-3 border-top">
                         <div class="d-flex gap-2 justify-content-end">
-                            <a th:href="@{/admin/interviews}" class="btn btn-outline-secondary">
+                            <a th:href="@{/templates/interviews}" class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-left me-2"></i>Quay lại
                             </a>
                             <button type="submit" class="btn btn-primary">

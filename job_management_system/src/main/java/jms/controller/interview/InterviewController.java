@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/admin/interviews")
+@RequestMapping("/interviews")
 @RequiredArgsConstructor
 public class InterviewController {
 
@@ -78,7 +78,7 @@ public class InterviewController {
 
         model.addAttribute("interviewers", interviewService.getAllInterviewers());
 
-        return "admin/interviews/list";
+        return "interviews/list";
     }
 
     // ... CÁC METHOD KHÁC GIỮ NGUYÊN ...
@@ -87,14 +87,14 @@ public class InterviewController {
         model.addAttribute("interview", new InterviewDTO());
         model.addAttribute("interviewers", interviewService.getAllInterviewers());
         model.addAttribute("applications", interviewService.getAllApplications());
-        return "admin/interviews/create";
+        return "interviews/create";
     }
 
     @PostMapping("/create")
     public String createInterview(@ModelAttribute InterviewDTO interviewDTO) {
         interviewService.createInterview(interviewDTO);
 
-        return "redirect:/admin/interviews";
+        return "redirect:/interviews";
     }
 
     @GetMapping("/edit/{id}")
@@ -102,20 +102,20 @@ public class InterviewController {
         InterviewDTO interview = interviewService.getInterviewById(id);
         model.addAttribute("interview", interview);
         model.addAttribute("interviewers", interviewService.getAllInterviewers());
-        return "admin/interviews/edit";
+        return "interviews/edit";
     }
 
     @PostMapping("/edit/{id}")
     public String updateInterview(@PathVariable Long id, @ModelAttribute InterviewDTO interviewDTO) {
         interviewService.updateInterview(id, interviewDTO);
-        return "redirect:/admin/interviews";
+        return "redirect:/interviews";
     }
 
     @GetMapping("/update-result/{id}")
     public String showUpdateResultForm(@PathVariable Long id, Model model) {
         InterviewDTO interview = interviewService.getInterviewById(id);
         model.addAttribute("interview", interview);
-        return "admin/interviews/update-result";
+        return "interviews/update-result";
     }
 
     @PostMapping("/update-result/{id}")
@@ -123,13 +123,13 @@ public class InterviewController {
                                         @RequestParam String result,
                                         @RequestParam(required = false) String notes) {
         interviewService.updateInterviewResult(id, result, notes);
-        return "redirect:/admin/interviews";
+        return "redirect:/interviews";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteInterview(@PathVariable Long id) {
         interviewService.deleteInterview(id);
-        return "redirect:/admin/interviews";
+        return "redirect:/interviews";
     }
 
 }

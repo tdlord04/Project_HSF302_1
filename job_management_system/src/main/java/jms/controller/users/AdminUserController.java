@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = {"/manager/users"})
+@RequestMapping(value = {"/users"})
 @RequiredArgsConstructor
 public class AdminUserController {
 
