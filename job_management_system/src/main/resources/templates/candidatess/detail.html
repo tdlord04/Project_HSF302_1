@@ -66,7 +66,8 @@
                                     </tr>
                                     <tr>
                                         <td><strong>Điện thoại:</strong></td>
-                                        <td th:text="${candidate.phone} ?: 'N/A'" class="${candidate.phone ? '' : 'text-muted'}"></td>
+                                        <td th:text="${candidate.phone} ?: 'N/A'"
+                                            class="${candidate.phone ? '' : 'text-muted'}"></td>
                                     </tr>
                                 </table>
                             </div>
@@ -83,11 +84,13 @@
                                     </tr>
                                     <tr>
                                         <td><strong>Học vấn:</strong></td>
-                                        <td th:text="${candidate.education} ?: 'N/A'" class="${candidate.education ? '' : 'text-muted'}"></td>
+                                        <td th:text="${candidate.education} ?: 'N/A'"
+                                            class="${candidate.education ? '' : 'text-muted'}"></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Công ty cũ:</strong></td>
-                                        <td th:text="${candidate.previousCompany} ?: 'N/A'" class="${candidate.previousCompany ? '' : 'text-muted'}"></td>
+                                        <td th:text="${candidate.previousCompany} ?: 'N/A'"
+                                            class="${candidate.previousCompany ? '' : 'text-muted'}"></td>
                                     </tr>
                                 </table>
                             </div>
@@ -112,6 +115,50 @@
                         </div>
                         <div th:if="${#lists.isEmpty(candidate.skills)}" class="text-muted">
                             <i class="bi bi-info-circle me-1"></i>Chưa có kỹ năng nào được thêm vào.
+                        </div>
+                    </div>
+                </div>
+                <!-- Tài liệu đính kèm - HIỂN THỊ LUÔN ĐỂ DEBUG -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-files me-2"></i>Tài liệu đính kèm
+                            <small class="text-muted">(Tổng: <span th:text="${documentCount}">0</span> tài liệu)</small>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Hiển thị khi CÓ documents -->
+                        <div th:if="${not #lists.isEmpty(candidate.documents)}" class="list-group">
+                            <div th:each="doc : ${candidate.documents}"
+                                 class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-file-earmark me-2"></i>
+                                    <strong th:text="${doc.documentName}"></strong>
+                                    <small class="text-muted ms-2" th:text="'(' + ${doc.fileType} + ')'"></small>
+                                    <br>
+                                    <small class="text-muted"
+                                           th:text="'Kích thước: ' + ${#numbers.formatInteger(doc.fileSize / 1024, 1, 'COMMA')} + ' KB'"></small>
+                                    <small class="text-muted ms-2"
+                                           th:text="'Upload: ' + ${#temporals.format(doc.uploadedAt, 'dd/MM/yyyy HH:mm')}"></small>
+                                </div>
+                                <div>
+                                    <a th:href="@{/documents/download/{id}(id=${doc.id})}"
+                                       class="btn btn-outline-primary btn-sm" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Tải xuống
+                                    </a>
+                                    <a th:href="@{/documents/preview/{id}(id=${doc.id})}"
+                                       class="btn btn-outline-info btn-sm ms-1" target="_blank">
+                                        <i class="bi bi-eye me-1"></i>Xem
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hiển thị khi KHÔNG CÓ documents -->
+                        <div th:if="${#lists.isEmpty(candidate.documents)}" class="text-center text-muted py-4">
+                            <i class="bi bi-folder-x display-4"></i>
+                            <p class="mt-2 mb-0">Chưa có tài liệu nào được tải lên</p>
+                            <small>Nhấn "Chỉnh sửa" để thêm tài liệu</small>
                         </div>
                     </div>
                 </div>
@@ -202,13 +249,16 @@
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-2">
-                            <a th:href="@{/applications?candidateId={id}(id=${candidate.id})}" class="btn btn-outline-primary btn-sm">
+                            <a th:href="@{/applications?candidateId={id}(id=${candidate.id})}"
+                               class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-file-text me-1"></i>Xem đơn ứng tuyển
                             </a>
-                            <a th:href="@{/documents?candidateId={id}(id=${candidate.id})}" class="btn btn-outline-info btn-sm">
+                            <a th:href="@{/documents?candidateId={id}(id=${candidate.id})}"
+                               class="btn btn-outline-info btn-sm">
                                 <i class="bi bi-file-earmark me-1"></i>Quản lý tài liệu
                             </a>
-                            <form th:action="@{/candidates/{id}/delete(id=${candidate.id})}" method="post" class="d-grid">
+                            <form th:action="@{/candidates/{id}/delete(id=${candidate.id})}" method="post"
+                                  class="d-grid">
                                 <button type="submit" class="btn btn-outline-danger btn-sm"
                                         onclick="return confirm('Bạn có chắc muốn xóa ứng viên này? Hành động này không thể hoàn tác.')">
                                     <i class="bi bi-trash me-1"></i>Xóa ứng viên

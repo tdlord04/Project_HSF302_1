@@ -92,11 +92,15 @@
                                 <span th:text="${candidate.experienceYears} + ' năm'" class="badge bg-info"></span>
                             </td>
                             <td>
-                                    <span th:each="skill : ${candidate.skills}"
-                                          th:text="${skill.name}"
-                                          class="badge bg-secondary me-1">
-                                    </span>
-                                <span th:if="${#lists.isEmpty(candidate.skills)}" class="text-muted">Chưa có</span>
+                                <div th:if="${candidate.skills != null and !candidate.skills.isEmpty()}">
+        <span th:each="skill, iterStat : ${candidate.skills}"
+              th:text="${skill.name}"
+              class="badge bg-secondary me-1">
+        </span>
+                                </div>
+                                <div th:if="${candidate.skills == null or candidate.skills.isEmpty()}">
+                                    <span class="text-muted">Chưa có</span>
+                                </div>
                             </td>
                             <td th:text="${#temporals.format(candidate.createdAt, 'dd/MM/yyyy')}"></td>
                             <td>
@@ -133,15 +137,18 @@
                 <nav th:if="${candidates.totalPages > 1}" aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
                         <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                            <a class="page-link" th:href="@{/candidates(page=${currentPage - 1}, size=${candidates.size}, search=${search}, skill=${skill}, minExp=${minExp}, maxExp=${maxExp})}">Trước</a>
+                            <a class="page-link"
+                               th:href="@{/candidates(page=${currentPage - 1}, size=${candidates.size}, search=${search}, skill=${skill}, minExp=${minExp}, maxExp=${maxExp})}">Trước</a>
                         </li>
                         <li th:each="i : ${#numbers.sequence(0, candidates.totalPages - 1)}"
                             class="page-item" th:classappend="${i == currentPage} ? 'active'">
-                            <a class="page-link" th:href="@{/candidates(page=${i}, size=${candidates.size}, search=${search}, skill=${skill}, minExp=${minExp}, maxExp=${maxExp})}"
+                            <a class="page-link"
+                               th:href="@{/candidates(page=${i}, size=${candidates.size}, search=${search}, skill=${skill}, minExp=${minExp}, maxExp=${maxExp})}"
                                th:text="${i + 1}"></a>
                         </li>
                         <li class="page-item" th:classappend="${currentPage == candidates.totalPages - 1} ? 'disabled'">
-                            <a class="page-link" th:href="@{/candidates(page=${currentPage + 1}, size=${candidates.size}, search=${search}, skill=${skill}, minExp=${minExp}, maxExp=${maxExp})}">Sau</a>
+                            <a class="page-link"
+                               th:href="@{/candidates(page=${currentPage + 1}, size=${candidates.size}, search=${search}, skill=${skill}, minExp=${minExp}, maxExp=${maxExp})}">Sau</a>
                         </li>
                     </ul>
                 </nav>

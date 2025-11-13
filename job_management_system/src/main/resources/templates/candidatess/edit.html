@@ -13,7 +13,8 @@
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a th:href="@{/candidates}">Quản lý ứng viên</a></li>
-                <li class="breadcrumb-item"><a th:href="@{/candidates/{id}(id=${candidate.id})}" th:text="${candidate.fullName}"></a></li>
+                <li class="breadcrumb-item"><a th:href="@{/candidates/{id}(id=${candidate.id})}"
+                                               th:text="${candidate.fullName}"></a></li>
                 <li class="breadcrumb-item active">Chỉnh sửa</li>
             </ol>
         </nav>
@@ -46,9 +47,13 @@
         <!-- Edit Form -->
         <div class="card">
             <div class="card-body">
-                <form th:action="@{/candidates/{id}/edit(id=${candidate.id})}" th:object="${candidate}" method="post" class="needs-validation" novalidate>
+                <form th:action="@{/candidates/{id}/edit(id=${candidate.id})}"
+                      method="post"
+                      enctype="multipart/form-data"
+                      class="needs-validation" novalidate>
+
+                    <!-- Thông tin cơ bản -->
                     <div class="row">
-                        <!-- Thông tin cơ bản -->
                         <div class="col-md-6">
                             <h5 class="mb-3 text-primary">
                                 <i class="bi bi-info-circle me-2"></i>Thông tin cơ bản
@@ -56,24 +61,29 @@
 
                             <div class="mb-3">
                                 <label for="fullName" class="form-label">Họ và tên <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required>
+                                <input type="text" class="form-control" id="fullName" name="fullName"
+                                       th:value="${candidate.fullName}" required>
                                 <div class="invalid-feedback">Vui lòng nhập họ tên ứng viên.</div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="email" th:field="*{email}" required readonly>
+                                <input type="email" class="form-control" id="email"
+                                       th:value="${candidate.email}" readonly disabled>
                                 <small class="form-text text-muted">Email không thể thay đổi.</small>
+                                <input type="hidden" name="email" th:value="${candidate.email}">
                             </div>
 
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Số điện thoại</label>
-                                <input type="tel" class="form-control" id="phone" th:field="*{phone}">
+                                <input type="tel" class="form-control" id="phone" name="phone"
+                                       th:value="${candidate.phone}">
                             </div>
 
                             <div class="mb-3">
                                 <label for="education" class="form-label">Trình độ học vấn</label>
-                                <input type="text" class="form-control" id="education" th:field="*{education}" placeholder="Ví dụ: Đại học, Cao đẳng...">
+                                <input type="text" class="form-control" id="education" name="education"
+                                       th:value="${candidate.education}" placeholder="Ví dụ: Đại học, Cao đẳng...">
                             </div>
                         </div>
 
@@ -85,12 +95,14 @@
 
                             <div class="mb-3">
                                 <label for="experienceYears" class="form-label">Số năm kinh nghiệm</label>
-                                <input type="number" class="form-control" id="experienceYears" th:field="*{experienceYears}" min="0" max="50">
+                                <input type="number" class="form-control" id="experienceYears" name="experienceYears"
+                                       th:value="${candidate.experienceYears}" min="0" max="50">
                             </div>
 
                             <div class="mb-3">
                                 <label for="previousCompany" class="form-label">Công ty gần nhất</label>
-                                <input type="text" class="form-control" id="previousCompany" th:field="*{previousCompany}">
+                                <input type="text" class="form-control" id="previousCompany" name="previousCompany"
+                                       th:value="${candidate.previousCompany}">
                             </div>
 
                             <div class="mb-3">
@@ -100,7 +112,8 @@
                                         <input class="form-check-input" type="checkbox" th:value="${skill.id}"
                                                th:id="'skill_' + ${skill.id}" name="skillIds"
                                                th:checked="${candidate.skills.![id].contains(skill.id)}">
-                                        <label class="form-check-label" th:for="'skill_' + ${skill.id}" th:text="${skill.name}"></label>
+                                        <label class="form-check-label" th:for="'skill_' + ${skill.id}"
+                                               th:text="${skill.name}"></label>
                                     </div>
                                     <div th:if="${#lists.isEmpty(allSkills)}" class="text-muted">
                                         Chưa có kỹ năng nào. <a th:href="@{/skills}">Thêm kỹ năng mới</a>
@@ -110,7 +123,7 @@
                         </div>
                     </div>
 
-                    <!-- Mục tiêu nghề nghiệp & Chứng chỉ -->
+                    <!-- Thông tin bổ sung -->
                     <div class="row mt-3">
                         <div class="col-12">
                             <h5 class="mb-3 text-primary">
@@ -119,14 +132,102 @@
 
                             <div class="mb-3">
                                 <label for="careerGoal" class="form-label">Mục tiêu nghề nghiệp</label>
-                                <textarea class="form-control" id="careerGoal" th:field="*{careerGoal}" rows="3"
-                                          placeholder="Mô tả mục tiêu và định hướng nghề nghiệp..."></textarea>
+                                <textarea class="form-control" id="careerGoal" name="careerGoal" rows="3"
+                                          placeholder="Mô tả mục tiêu và định hướng nghề nghiệp..."
+                                          th:text="${candidate.careerGoal}"></textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label for="certificates" class="form-label">Chứng chỉ</label>
-                                <textarea class="form-control" id="certificates" th:field="*{certificates}" rows="2"
-                                          placeholder="Các chứng chỉ đã đạt được (phân cách bằng dấu phẩy)..."></textarea>
+                                <textarea class="form-control" id="certificates" name="certificates" rows="2"
+                                          placeholder="Các chứng chỉ đã đạt được..."
+                                          th:text="${candidate.certificates}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quản lý tài liệu -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h5 class="mb-3 text-primary">
+                                <i class="bi bi-files me-2"></i>Quản lý tài liệu
+                            </h5>
+
+                            <!-- Hiển thị documents hiện có -->
+                            <div class="mb-3" th:if="${not #lists.isEmpty(candidate.documents)}">
+                                <label class="form-label">Tài liệu hiện có</label>
+                                <div class="border rounded p-3 bg-light">
+                                    <div th:each="doc : ${candidate.documents}"
+                                         class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                                        <div>
+                                            <i class="bi bi-file-earmark me-2"></i>
+                                            <span th:text="${doc.documentName}"></span>
+                                            <small class="text-muted ms-2"
+                                                   th:text="'(' + ${doc.fileType} + ')'"></small>
+                                            <br>
+                                            <small class="text-muted"
+                                                   th:text="'Kích thước: ' + ${#numbers.formatInteger(doc.fileSize / 1024, 1, 'COMMA')} + ' KB'"></small>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <a th:href="@{/documents/download/{id}(id=${doc.id})}"
+                                               class="btn btn-outline-primary btn-sm me-2" target="_blank">
+                                                <i class="bi bi-download me-1"></i>Tải
+                                            </a>
+                                            <div class="form-check">
+                                                <input type="checkbox" name="deleteDocumentIds" th:value="${doc.id}"
+                                                       class="form-check-input me-1" id="deleteDoc_${doc.id}">
+                                                <label class="form-check-label text-danger small"
+                                                       for="deleteDoc_${doc.id}">
+                                                    Xóa
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Thêm documents mới - ĐƠN GIẢN -->
+                            <div class="mb-3">
+                                <label class="form-label">Thêm tài liệu mới</label>
+                                <small class="form-text text-muted d-block mb-2">
+                                    Hỗ trợ file: PDF, Word, hình ảnh. Tối đa 10MB/file.
+                                </small>
+
+                                <!-- Document 1 -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" name="newDocumentNames"
+                                               placeholder="Tên tài liệu (VD: CV Tiếng Anh)">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="file" class="form-control" name="newDocuments"
+                                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                                    </div>
+                                </div>
+
+                                <!-- Document 2 -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" name="newDocumentNames"
+                                               placeholder="Tên tài liệu (VD: Cover Letter)">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="file" class="form-control" name="newDocuments"
+                                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                                    </div>
+                                </div>
+
+                                <!-- Document 3 -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" name="newDocumentNames"
+                                               placeholder="Tên tài liệu (VD: Chứng chỉ)">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="file" class="form-control" name="newDocuments"
+                                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -150,11 +251,11 @@
     </div>
 </div>
 
+<!-- JavaScript đơn giản -->
 <script>
-    // Form validation
     document.addEventListener('DOMContentLoaded', function() {
+        // Form validation cơ bản
         const forms = document.querySelectorAll('.needs-validation');
-
         Array.from(forms).forEach(form => {
             form.addEventListener('submit', event => {
                 if (!form.checkValidity()) {
@@ -163,6 +264,14 @@
                 }
                 form.classList.add('was-validated');
             }, false);
+        });
+
+        // Hiển thị loading khi submit
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function() {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Đang xử lý...';
+            submitBtn.disabled = true;
         });
     });
 </script>
