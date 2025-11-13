@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/interviews")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('MANAGER','INTERVIEWER','ADMIN')")
 public class InterviewController {
 
     private final InterviewService interviewService;
@@ -35,7 +37,6 @@ public class InterviewController {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        // ✅ CONVERT INTERVIEWER
         Long interviewerId = null;
         if (interviewer != null && !interviewer.isEmpty() && !"null".equals(interviewer)) {
             try {
@@ -45,7 +46,6 @@ public class InterviewController {
             }
         }
 
-        // ✅ CONVERT DATES
         LocalDate fromDateObj = null;
         LocalDate toDateObj = null;
         try {
@@ -83,6 +83,7 @@ public class InterviewController {
 
     // ... CÁC METHOD KHÁC GIỮ NGUYÊN ...
     @GetMapping("/create")
+    @PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
     public String showCreateForm(Model model) {
         model.addAttribute("interview", new InterviewDTO());
         model.addAttribute("interviewers", interviewService.getAllInterviewers());
@@ -91,6 +92,7 @@ public class InterviewController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
     public String createInterview(@ModelAttribute InterviewDTO interviewDTO) {
         interviewService.createInterview(interviewDTO);
 
@@ -98,6 +100,7 @@ public class InterviewController {
     }
 
     @GetMapping("/edit/{id}")
+    @PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
     public String showEditForm(@PathVariable Long id, Model model) {
         InterviewDTO interview = interviewService.getInterviewById(id);
         model.addAttribute("interview", interview);
@@ -106,12 +109,14 @@ public class InterviewController {
     }
 
     @PostMapping("/edit/{id}")
+    @PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
     public String updateInterview(@PathVariable Long id, @ModelAttribute InterviewDTO interviewDTO) {
         interviewService.updateInterview(id, interviewDTO);
         return "redirect:/interviews";
     }
 
     @GetMapping("/update-result/{id}")
+    @PreAuthorize("hasAnyRole('INTERVIEWER','ADMIN')")
     public String showUpdateResultForm(@PathVariable Long id, Model model) {
         InterviewDTO interview = interviewService.getInterviewById(id);
         model.addAttribute("interview", interview);
@@ -119,6 +124,7 @@ public class InterviewController {
     }
 
     @PostMapping("/update-result/{id}")
+    @PreAuthorize("hasAnyRole('INTERVIEWER','ADMIN')")
     public String updateInterviewResult(@PathVariable Long id,
                                         @RequestParam String result,
                                         @RequestParam(required = false) String notes) {
@@ -127,6 +133,7 @@ public class InterviewController {
     }
 
     @GetMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
     public String deleteInterview(@PathVariable Long id) {
         interviewService.deleteInterview(id);
         return "redirect:/interviews";

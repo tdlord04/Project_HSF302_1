@@ -32,10 +32,5 @@ public interface UserAccountMapper {
     UserAccountDTO toDTO(User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "passwordHash", expression = "java(dto.getPassword() != null ? dto.getPassword() : account.getPasswordHash())")
-    void updateAccountFromDTO(UserAccountDTO dto, @MappingTarget Account account);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "companyId", target = "company.id")
-    void updateUserFromDTO(UserAccountDTO dto, @MappingTarget User user);
+    void updateUserFromDto(UserAccountDTO dto, @MappingTarget User user);
 }

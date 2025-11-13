@@ -10,14 +10,10 @@ import lombok.*;
  */
 @Entity
 @Table(name = "account", indexes = {
-        @Index(name = "idx_account_username", columnList = "username"),
         @Index(name = "idx_account_email", columnList = "email")
 })
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Account extends BaseEntity {
-
-    @Column(name = "username", unique = true, nullable = false, columnDefinition = "NVARCHAR(100)")
-    private String username; // Tên đăng nhập
 
     @Column(name = "email", unique = true, nullable = false, columnDefinition = "NVARCHAR(255)")
     private String email; // Email đăng nhập
@@ -36,7 +32,6 @@ public class Account extends BaseEntity {
     @Override
     public String toString() {
         return "Account{" +
-                "username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", passwordHash='" + passwordHash + '\'' +
                 ", role=" + role +

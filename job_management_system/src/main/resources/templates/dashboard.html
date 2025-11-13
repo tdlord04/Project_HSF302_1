@@ -3,11 +3,25 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/home}" lang="vi">
 <head>
-    <title layout:title="Trang chủ">Trang chủ</title>
+    <title layout:title="Dashboard">Dashboard</title>
 </head>
 
 <body>
 <section layout:fragment="content">
+
+    <div class="container mt-4">
+        <div class="card shadow-sm p-4">
+            <h2 class="mb-3">👋 Xin chào,
+                <span th:text="${username}">User</span>!
+            </h2>
+
+            <p class="text-muted">
+                Chúc bạn một ngày làm việc hiệu quả!
+            </p>
+
+            <hr>
+        </div>
+    </div>
 
 </section>
 </body>

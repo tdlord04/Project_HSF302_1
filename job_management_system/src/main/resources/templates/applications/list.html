@@ -101,7 +101,6 @@
                                 <span th:if="${app.jobPosting.company == null}"
                                       class="text-muted">N/A</span>
                             </td>
-                            <td>
                                 <!-- Sửa biểu thức classappend đơn giản hơn -->
                             <td>
                                 <th:block th:switch="${app.status}">
@@ -112,7 +111,6 @@
                                     <span th:case="HIRED" class="badge bg-info" th:text="${app.status}"></span>
                                     <span th:case="*" class="badge bg-secondary" th:text="${app.status}"></span>
                                 </th:block>
-                            </td>
                             </td>
                             <td th:text="${app.source} ?: 'N/A'"></td>
                             <td th:text="${#temporals.format(app.createdAt, 'dd/MM/yyyy')}"></td>

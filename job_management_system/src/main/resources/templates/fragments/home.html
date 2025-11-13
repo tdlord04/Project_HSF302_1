@@ -354,8 +354,10 @@
                                 <i class="bi bi-person-fill"></i>
                             </div>
                             <div class="user-details d-none d-md-block">
-                                <div class="fw-bold">Administrator</div>
-                                <small class="text-muted">Quản trị viên</small>
+                                <small th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="text-muted">Quản trị viên</small>
+                                <small th:if="${#authorization.expression('hasRole(''MANAGER'')')}" class="text-muted">Quản lý</small>
+                                <small th:if="${#authorization.expression('hasRole(''HR'')')}" class="text-muted">HR</small>
+                                <small th:if="${#authorization.expression('hasRole(''INTERVIEWER'')')}" class="text-muted">Phỏng vấn viên</small>
                             </div>
                         </div>
                     </div>

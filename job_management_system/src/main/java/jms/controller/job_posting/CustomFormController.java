@@ -5,6 +5,7 @@ import jms.dto.CustomFormDto;
 import jms.service.CustomFormService;
 import jms.service.JobPostingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/custom-forms")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
 public class CustomFormController {
 
     private final CustomFormService customFormService;
@@ -71,7 +73,6 @@ public class CustomFormController {
             result.addError(new FieldError("form", "formStructureJson", "Dữ liệu không hợp lệ: " + ex.getMessage()));
         }
 
-        // ✅ Trả lại view khi lỗi runtime/JSON và vẫn nạp jobTitle để không bị mất
         model.addAttribute("jobTitle", safeJobTitle(dto.getJobPostingId()));
         return "job-posting/custom-form-builder";
     }

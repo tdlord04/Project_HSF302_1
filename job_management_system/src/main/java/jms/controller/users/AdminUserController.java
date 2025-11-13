@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +27,7 @@ import java.util.List;
 @Controller
 @RequestMapping(value = {"/users"})
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN','MANAGER','HR')")
 public class AdminUserController {
 
     private final UserAccountService userAccountService;
@@ -61,6 +64,7 @@ public class AdminUserController {
         UserAccountDTO dto = new UserAccountDTO();
         model.addAttribute("userAccountDTO", dto);
         model.addAttribute("editMode", false);
+
         addCommonAttributes(model);
         return "users/user-form";
     }
@@ -100,7 +104,12 @@ public class AdminUserController {
     }
 
     private void addCommonAttributes(Model model) {
-        List<Role> roles = Arrays.asList(Role.values());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String roleName = authentication.getAuthorities().iterator().next().getAuthority();
+        roleName = roleName.replace("ROLE_", "");
+        Role currentRole = Role.valueOf(roleName);
+        List<Role> roles = currentRole.getAssignableRoles();
+
         List<UserStatus> statuses = Arrays.asList(UserStatus.values());
         model.addAttribute("roles", roles);
         model.addAttribute("statuses", statuses);

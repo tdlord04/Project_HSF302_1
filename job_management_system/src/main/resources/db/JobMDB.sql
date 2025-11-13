@@ -17,22 +17,27 @@ go
 -- ==============================================================
 -- 1) ACCOUNT (tài khoản: ADMIN, HR, MANAGER, INTERVIEWER, CANDIDATE)
 -- ==============================================================
-INSERT INTO account (username, email, password_hash, role, status, created_at, updated_at)
+INSERT INTO account ( email, password_hash, role, status)
 VALUES
-    ('users', 'users@nextgenhr.com', '$2a$10$Kpxh.5.DFdBTlrPmGVqYCe5DiEHzqyWdourJASxPK8GCwm0KxyUyG', 'ADMIN', 'ACTIVE', GETDATE(), GETDATE()),
-    ('hr01', 'hr01@nextgenhr.com', '$2a$10$aKF3mAqTpKk3OardETrP1.FyrxVext5ktVd27uL5YYaVRhZYSXN8K', 'HR', 'ACTIVE', GETDATE(), GETDATE()),
-    ('hr02', 'hr02@nextgenhr.com', '$2a$10$.CDZLNxX5CE3sHqxk8qAC.9s.Q3.Rlx7UJGh9MrSG5ARvTKI2aXgy', 'HR', 'ACTIVE', GETDATE(), GETDATE()),
-    ('manager01', 'manager01@nextgenhr.com', '$2a$10$116xwg/h1bJOz0tcdZewoe3XcpukhNw9bzNneXdo5Piv7lg3HDXhe', 'MANAGER', 'ACTIVE', GETDATE(), GETDATE()),
-    ('manager02', 'manager02@nextgenhr.com', '$2a$10$JHy4QUi9wFhopu1OXqA8X.33XQkKA7D3dfEM7kWQPeuT7VDDLQzgq', 'MANAGER', 'ACTIVE', GETDATE(), GETDATE()),
-    ('interviewer01', 'interviewer01@nextgenhr.com', '$2a$10$a0bNIJDU81trS8IeA4/ENOoEDMgbJcnrtGgNsvOVl179fy9KUVuQW', 'INTERVIEWER', 'ACTIVE', GETDATE(), GETDATE()),
-    ('interviewer02', 'interviewer02@nextgenhr.com', '$2a$10$X1QWLWUGzR2y0oryyhgZBOdGTW20jh8OWtlItzVwQhpVXC9rKXUaq', 'INTERVIEWER', 'ACTIVE', GETDATE(), GETDATE()),
-    ('candidate01', 'candidate01@mail.com', '$2a$10$U30AsQIAuu7YwvxszeHw0OHbjfcO86BPQWggonXZTOo6ZheHkOjMi', 'HR', 'ACTIVE', GETDATE(), GETDATE()),
-    ('candidate02', 'candidate02@mail.com', '$2a$10$fC1eAx8snT3z3phBUL9r/OXgeGGvqZjgaYLiqUEI1VWeuMayNhkH6', 'HR', 'ACTIVE', GETDATE(), GETDATE()),
-    ('candidate03', 'candidate03@mail.com', '$2a$10$XVW4.pGQ0q43Na.aCVgobu9Z5W3mHdR9sQmCLsRXW673Vuk2chDZi', 'MANAGER', 'ACTIVE', GETDATE(), GETDATE()),
-    ('candidate04', 'candidate04@mail.com', '$2a$10$Om8G7s34yCzrJ3042DPNTeuCtU330Y872ByXPuyyBwKYM4ifiOBaq', 'MANAGER', 'ACTIVE', GETDATE(), GETDATE()),
-    ('candidate05', 'candidate05@mail.com', '$2a$10$KVAjeLTffonRcXjv1uxzN.WCcJEXRrK9vAZ.nILv4NU3bPlvFnzju', 'MANAGER', 'ACTIVE', GETDATE(), GETDATE());
-GO
+    ( 'admin01@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'ADMIN', 'ACTIVE'),
 
+    ('hr01@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'HR', 'ACTIVE'),
+    ('hr02@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'HR', 'ACTIVE'),
+    ('hr03@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'HR', 'ACTIVE'),
+
+    ('manager01@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'MANAGER', 'ACTIVE'),
+    ('manager02@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'MANAGER', 'ACTIVE'),
+    ('manager03@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'MANAGER', 'ACTIVE'),
+    ('manager04@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'MANAGER', 'ACTIVE'),
+
+    ('inter01@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'INTERVIEWER', 'ACTIVE'),
+    ('inter02@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'INTERVIEWER', 'ACTIVE'),
+    ('inter03@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'INTERVIEWER', 'ACTIVE'),
+    ('inter04@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'INTERVIEWER', 'ACTIVE'),
+    ('inter05@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'INTERVIEWER', 'ACTIVE'),
+    ('inter06@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'INTERVIEWER', 'ACTIVE'),
+    ('inter07@jms.com', '$2a$10$7ve.2zWHgzTWSHOUlkOCOuYTTxakAAkyrclvSpctNtixSkjkKbAGC', 'INTERVIEWER', 'ACTIVE');
+GO
 
 -- ==============================================================
 -- 2) COMPANY (1 bản ghi)
@@ -46,37 +51,26 @@ GO
 -- 3) USER (nhân viên trong công ty, map tới account)
 --    Bảng tên là [user] trong DB (không phải account)
 -- ==============================================================
-INSERT INTO [user] (full_name, phone, address, company_id, account_id, created_at, updated_at)
+INSERT INTO [user] (full_name, phone, address, company_id, account_id)
 VALUES
-(N'Nguyễn Văn Admin', N'0901234567', N'Hà Nội',
-    (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
-    (SELECT id FROM account WHERE username = 'users'), GETDATE(), GETDATE()),
+    (N'Nguyễn Văn Admin', '0900000001', N'Hà Nội', 1, 1),
 
-(N'Hoàng Thị HR', N'0902345678', N'Hà Nội',
-    (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
-    (SELECT id FROM account WHERE username = 'hr01'), GETDATE(), GETDATE()),
+    (N'Nguyễn Thị HR 01', '0900000002', N'Hà Nội', 1, 2),
+    (N'Lê Văn HR 02', '0900000003', N'Đà Nẵng', 1, 3),
+    (N'Trần HR 03', '0900000004', N'Hồ Chí Minh', 1, 4),
 
-(N'Phạm Văn HR2', N'0903456789', N'Hà Nội',
-    (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
-    (SELECT id FROM account WHERE username = 'hr02'), GETDATE(), GETDATE()),
+    (N'Phạm Manager 01', '0900000005', N'Hải Phòng', 1, 5),
+    (N'Trần Manager 02', '0900000006', N'Nha Trang', 1, 6),
+    (N'Lý Manager 03', '0900000007', N'Vinh', 1, 7),
+    (N'Đỗ Manager 04', '0900000008', N'Huế', 1, 8),
 
-(N'Trần Quang Manager', N'0904567890', N'Hà Nội',
-    (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
-    (SELECT id FROM account WHERE username = 'manager01'), GETDATE(), GETDATE()),
-
-(N'Trần Minh Manager2', N'0905678901', N'Đà Nẵng',
-    (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
-    (SELECT id FROM account WHERE username = 'manager02'), GETDATE(), GETDATE()),
-
-(N'Nguyễn Interviewer 1', N'0906789012', N'HCM',
-    (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
-    (SELECT id FROM account WHERE username = 'interviewer01'), GETDATE(), GETDATE()),
-
-(N'Lê Interviewer 2', N'0907890123', N'HCM',
-    (SELECT id FROM company WHERE name = N'NextGen HR Solutions'),
-    (SELECT id FROM account WHERE username = 'interviewer02'), GETDATE(), GETDATE());
-GO
-
+    (N'Interview 01', '0900000009', N'Hà Nội', 1, 9),
+    (N'Interview 02', '0900000010', N'Đà Nẵng', 1, 10),
+    (N'Interview 03', '0900000011', N'Hồ Chí Minh', 1, 11),
+    (N'Interview 04', '0900000012', N'Hà Nội', 1, 12),
+    (N'Interview 05', '0900000013', N'Hải Phòng', 1, 13),
+    (N'Interview 06', '0900000014', N'Huế', 1, 14),
+    (N'Interview 07', '0900000015', N'Cần Thơ', 1, 15);
 
 -- ==============================================================
 -- 4) SKILL (danh mục kỹ năng)
@@ -252,67 +246,70 @@ GO
 INSERT INTO interview (application_id, interviewer_id, interview_date, location, result, notes, created_at, updated_at)
 VALUES
 ((SELECT TOP 1 id FROM application WHERE candidate_id = (SELECT TOP 1 id FROM candidate_profile WHERE email='candidate02@mail.com') AND job_posting_id = (SELECT TOP 1 id FROM job_posting WHERE job_title = N'QA Engineer')),
-    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE username='interviewer01')),
+    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE email='inter01@jms.com')),
     DATEADD(day, -3, GETDATE()), N'Online - Google Meet', N'Pass', N'Ứng viên nắm tốt automation', GETDATE(), GETDATE()),
 ((SELECT TOP 1 id FROM application WHERE candidate_id = (SELECT TOP 1 id FROM candidate_profile WHERE email='candidate05@mail.com') AND job_posting_id = (SELECT TOP 1 id FROM job_posting WHERE job_title = N'QA Engineer')),
-    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE username='interviewer02')),
+    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE email='inter02@jms.com')),
     DATEADD(day, -10, GETDATE()), N'Office - Phòng A', N'Fail', N'Thi coding test chưa đạt', GETDATE(), GETDATE()),
 ((SELECT TOP 1 id FROM application WHERE candidate_id = (SELECT TOP 1 id FROM candidate_profile WHERE email='candidate06@mail.com') AND job_posting_id = (SELECT TOP 1 id FROM job_posting WHERE job_title = N'DevOps Engineer')),
-    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE username='interviewer01')),
+    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE email='inter01@jms.com')),
     DATEADD(day, 1, GETDATE()), N'Online - Zoom', N'Pending', N'Chưa có kết quả', GETDATE(), GETDATE()),
 ((SELECT TOP 1 id FROM application WHERE candidate_id = (SELECT TOP 1 id FROM candidate_profile WHERE email='candidate07@mail.com') AND job_posting_id = (SELECT TOP 1 id FROM job_posting WHERE job_title = N'Data Engineer')),
-    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE username='interviewer02')),
+    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE email='inter02@jms.com')),
     DATEADD(day, -2, GETDATE()), N'Office - Phòng B', N'Pending', N'Cần đánh giá thêm', GETDATE(), GETDATE()),
 ((SELECT TOP 1 id FROM application WHERE candidate_id = (SELECT TOP 1 id FROM candidate_profile WHERE email='candidate13@mail.com') AND job_posting_id = (SELECT TOP 1 id FROM job_posting WHERE job_title = N'Lập trình viên Java')),
-    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE username='interviewer01')),
+    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE email='inter01@jms.com')),
     DATEADD(day, -1, GETDATE()), N'Office - Phòng C', N'Pass', N'Ứng viên có kinh nghiệm', GETDATE(), GETDATE()),
 ((SELECT TOP 1 id FROM application WHERE candidate_id = (SELECT TOP 1 id FROM candidate_profile WHERE email='candidate19@mail.com') AND job_posting_id = (SELECT TOP 1 id FROM job_posting WHERE job_title = N'Lập trình viên Java')),
-    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE username='interviewer02')),
+    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE email='inter02@jms.com')),
     DATEADD(day, 2, GETDATE()), N'Online - Teams', N'Pending', N'Chưa phỏng vấn', GETDATE(), GETDATE()),
 ((SELECT TOP 1 id FROM application WHERE candidate_id = (SELECT TOP 1 id FROM candidate_profile WHERE email='candidate11@mail.com') AND job_posting_id = (SELECT TOP 1 id FROM job_posting WHERE job_title = N'Front-end Developer')),
-    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE username='interviewer01')),
+    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE email='inter01@jms.com')),
     DATEADD(day, -5, GETDATE()), N'Office - Phòng A', N'Pass', N'UI tốt, JS tốt', GETDATE(), GETDATE()),
 ((SELECT TOP 1 id FROM application WHERE candidate_id = (SELECT TOP 1 id FROM candidate_profile WHERE email='candidate12@mail.com') AND job_posting_id = (SELECT TOP 1 id FROM job_posting WHERE job_title = N'QA Engineer')),
-    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE username='interviewer02')),
+    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE email='inter02@jms.com')),
     DATEADD(day, -4, GETDATE()), N'Online - Google Meet', N'Pass', N'Ứng viên manual tốt', GETDATE(), GETDATE()),
 ((SELECT TOP 1 id FROM application WHERE candidate_id = (SELECT TOP 1 id FROM candidate_profile WHERE email='candidate02@mail.com') AND job_posting_id = (SELECT TOP 1 id FROM job_posting WHERE job_title = N'QA Engineer')),
-    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE username='interviewer01')),
+    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE email='inter01@jms.com')),
     DATEADD(day, -1, GETDATE()), N'Office - Phòng A', N'Pass', N'Ứng viên có tiềm năng', GETDATE(), GETDATE()),
 ((SELECT TOP 1 id FROM application WHERE candidate_id = (SELECT TOP 1 id FROM candidate_profile WHERE email='candidate03@mail.com') AND job_posting_id = (SELECT TOP 1 id FROM job_posting WHERE job_title = N'Front-end Developer')),
-    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE username='interviewer02')),
+    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE email='inter02@jms.com')),
     DATEADD(day, 0, GETDATE()), N'Online - Zoom', N'Pending', N'Đang chờ kết quả', GETDATE(), GETDATE()),
 ((SELECT TOP 1 id FROM application WHERE candidate_id = (SELECT TOP 1 id FROM candidate_profile WHERE email='candidate20@mail.com') AND job_posting_id = (SELECT TOP 1 id FROM job_posting WHERE job_title = N'Junior QA')),
-    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE username='interviewer02')),
+    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE email='inter02@jms.com')),
     DATEADD(day, -2, GETDATE()), N'Office - Phòng B', N'Pass', N'Ứng viên fresh tốt', GETDATE(), GETDATE()),
 ((SELECT TOP 1 id FROM application WHERE candidate_id = (SELECT TOP 1 id FROM candidate_profile WHERE email='candidate01@mail.com') AND job_posting_id = (SELECT TOP 1 id FROM job_posting WHERE job_title = N'Fullstack Developer')),
-    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE username='interviewer01')),
+    (SELECT TOP 1 id FROM [user] WHERE account_id = (SELECT TOP 1 id FROM account WHERE email='inter01@jms.com')),
     DATEADD(day, 3, GETDATE()), N'Online - Teams', N'Pending', N'Ứng viên mong muốn fullstack', GETDATE(), GETDATE());
 GO
 
 
+
+-- ============================================================== 
+-- 12) EVALUATION_NOTE (ghi chú đánh giá) - email version
 -- ==============================================================
--- 12) EVALUATION_NOTE (ghi chú đánh giá)
--- ==============================================================
+
 INSERT INTO evaluation_note (interview_id, evaluator_id, content, rating, created_at, updated_at)
 VALUES
-(2, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer01')), N'Ứng viên có kỹ năng automation tốt, recommend vào vòng tiếp theo', 5, GETDATE(), GETDATE()),
-(3, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer02')), N'Chưa đáp ứng yêu cầu coding', 2, GETDATE(), GETDATE()),
-(6, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer01')), N'Ứng viên có nhiều dự án thực tế', 5, GETDATE(), GETDATE()),
-(8, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer01')), N'Front-end giỏi về UI', 4, GETDATE(), GETDATE()),
-(9, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer02')), N'Ứng viên manual test tốt', 4, GETDATE(), GETDATE()),
-(12, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer02')), N'Candidate fresh, nhiệt huyết', 3, GETDATE(), GETDATE()),
-(10, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer01')), N'Đang chờ feedback từ team', NULL, GETDATE(), GETDATE());
+(2, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE email='inter01@jms.com')), N'Ứng viên có kỹ năng automation tốt, recommend vào vòng tiếp theo', 5, GETDATE(), GETDATE()),
+(3, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE email='inter02@jms.com')), N'Chưa đáp ứng yêu cầu coding', 2, GETDATE(), GETDATE()),
+(6, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE email='inter01@jms.com')), N'Ứng viên có nhiều dự án thực tế', 5, GETDATE(), GETDATE()),
+(8, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE email='inter03@jms.com')), N'Front-end giỏi về UI', 4, GETDATE(), GETDATE()),
+(9, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE email='inter03@jms.com')), N'Ứng viên manual test tốt', 4, GETDATE(), GETDATE()),
+(12, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE email='inter01@jms.com')), N'Candidate fresh, nhiệt huyết', 3, GETDATE(), GETDATE()),
+(10, (SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE email='inter02@jms.com')), N'Đang chờ feedback từ team', NULL, GETDATE(), GETDATE());
 GO
+
 
 -- ==============================================================
 -- 13) OFFER (một vài offer)
 -- ==============================================================
 INSERT INTO offer (application_id, position_title, salary_offer, start_date, status, created_at, updated_at)
 VALUES
-(49, N'Lập trình viên Java', 30000.0, DATEADD(day, 30, GETDATE()), N'ACCEPTED', GETDATE(), GETDATE()),
-(38, N'QA Engineer', 18000.0, DATEADD(day, 21, GETDATE()), N'PENDING', GETDATE(), GETDATE()),
-(55, N'Lập trình viên Java', 22000.0, DATEADD(day, 45, GETDATE()), N'PENDING', GETDATE(), GETDATE()),
-(58, N'QA Automation Lead', 30000.0, DATEADD(day, 60, GETDATE()), N'REJECTED', GETDATE(), GETDATE());
+(9, N'Lập trình viên Java', 30000.0, DATEADD(day, 30, GETDATE()), N'ACCEPTED', GETDATE(), GETDATE()),
+(11, N'QA Engineer', 18000.0, DATEADD(day, 21, GETDATE()), N'PENDING', GETDATE(), GETDATE()),
+(12, N'Lập trình viên Java', 22000.0, DATEADD(day, 45, GETDATE()), N'PENDING', GETDATE(), GETDATE()),
+(18, N'QA Automation Lead', 30000.0, DATEADD(day, 60, GETDATE()), N'REJECTED', GETDATE(), GETDATE());
 GO
 
 -- ==============================================================
@@ -405,51 +402,6 @@ GO
 -- 20) AUDIT_LOG (khoảng 40 bản ghi ghi lại hành động)
 --    audit_log.user -> tham chiếu bảng [user]
 -- ==============================================================
-INSERT INTO audit_log (user_id, action, description, timestamp)
-VALUES
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='users')), N'CREATE_ACCOUNT', N'Admin tạo tài khoản hr01 và hr02', DATEADD(minute, -600, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='hr01')), N'LOGIN', N'HR01 đăng nhập hệ thống', DATEADD(minute, -590, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='hr02')), N'LOGIN', N'HR02 đăng nhập hệ thống', DATEADD(minute, -580, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='manager01')), N'CREATE_JOB', N'Manager tạo tin Lập trình viên Java', DATEADD(minute, -500, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='manager02')), N'CREATE_JOB', N'Manager tạo tin Fullstack Developer', DATEADD(minute, -490, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='hr01')), N'PUBLISH_JOB', N'HR publish tin QA Engineer', DATEADD(minute, -480, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='hr02')), N'UPDATE_JOB', N'HR cập nhật salary_range tin DevOps', DATEADD(minute, -470, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate01')), N'APPLY', N'Nguyễn Văn A ứng tuyển Lập trình viên Java', DATEADD(minute, -460, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate02')), N'APPLY', N'Lê Thị B ứng tuyển QA Engineer', DATEADD(minute, -455, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate03')), N'APPLY', N'Phạm Minh C ứng tuyển Front-end Developer', DATEADD(minute, -450, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate05')), N'UPDATE_PROFILE', N'Ứng viên cập nhật certificates', DATEADD(minute, -440, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer01')), N'SCHEDULE_INTERVIEW', N'Interviewer lên lịch phỏng vấn cho candidate02', DATEADD(minute, -430, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer02')), N'SCHEDULE_INTERVIEW', N'Interviewer lên lịch phỏng vấn cho candidate05', DATEADD(minute, -420, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer01')), N'PERFORM_INTERVIEW', N'Interviewer thực hiện phỏng vấn candidate02', DATEADD(minute, -410, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer02')), N'PERFORM_INTERVIEW', N'Interviewer thực hiện phỏng vấn candidate05', DATEADD(minute, -405, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='hr01')), N'REVIEW_APPLICATION', N'HR review ứng viên candidate13', DATEADD(minute, -400, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='hr01')), N'CREATE_OFFER', N'HR tạo offer cho candidate13', DATEADD(minute, -390, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='manager01')), N'APPROVE_OFFER', N'Manager approve offer cho candidate13', DATEADD(minute, -380, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate13')), N'RECEIVE_OFFER', N'Ứng viên nhận offer từ công ty', DATEADD(minute, -370, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate13')), N'ACCEPT_OFFER', N'Ứng viên đồng ý nhận offer', DATEADD(minute, -360, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='hr02')), N'CLOSE_JOB', N'HR đóng tin Fullstack Developer', DATEADD(minute, -350, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='hr01')), N'EXPORT_REPORT', N'HR xuất báo cáo Recruitment Funnel', DATEADD(minute, -340, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer01')), N'COMMENT', N'Interviewer comment on candidate11', DATEADD(minute, -330, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer02')), N'COMMENT', N'Interviewer comment on candidate12', DATEADD(minute, -325, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate19')), N'APPLY', N'Ứng viên candidate19 ứng tuyển Java', DATEADD(minute, -320, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate02')), N'RECEIVE_OFFER', N'Ứng viên nhận offer (QA)', DATEADD(minute, -315, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate02')), N'ACCEPT_OFFER', N'Ứng viên accept offer (QA)', DATEADD(minute, -310, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate05')), N'APPLY', N'Ứng viên apply QA Automation Lead', DATEADD(minute, -305, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='hr01')), N'UPDATE_APPLICATION', N'HR cập nhật trạng thái ứng viên candidate05', DATEADD(minute, -300, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='hr02')), N'IMPORT_CANDIDATES', N'HR import danh sách candidate từ CSV', DATEADD(minute, -295, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='manager02')), N'CREATE_REPORT', N'Manager tạo báo cáo KPI', DATEADD(minute, -290, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='users')), N'GRANT_ROLE', N'Admin gán role cho user mới', DATEADD(minute, -285, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate20')), N'APPLY', N'Candidate20 apply Junior QA', DATEADD(minute, -280, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate11')), N'UPDATE_PROFILE', N'Candidate11 cập nhật portfolio', DATEADD(minute, -275, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate03')), N'APPLY', N'Candidate03 apply Front-end', DATEADD(minute, -270, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='candidate06')), N'APPLY', N'Candidate06 apply DevOps', DATEADD(minute, -265, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer01')), N'EVALUATE', N'Interviewer đánh giá candidate13', DATEADD(minute, -260, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='interviewer02')), N'EVALUATE', N'Interviewer đánh giá candidate02', DATEADD(minute, -255, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='hr01')), N'ARCHIVE_CANDIDATE', N'HR archive candidate old records', DATEADD(minute, -250, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='users')), N'DELETE_ACCOUNT', N'Admin xóa tài khoản thử nghiệm', DATEADD(minute, -240, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='hr02')), N'EXPORT_CANDIDATES', N'HR export candidates list', DATEADD(minute, -230, GETDATE())),
-((SELECT id FROM [user] WHERE account_id = (SELECT id FROM account WHERE username='manager01')), N'REASSIGN_JOB', N'Manager assign job to HR', DATEADD(minute, -220, GETDATE()));
-GO
 
 -- ==============================================================
 -- End of seed script

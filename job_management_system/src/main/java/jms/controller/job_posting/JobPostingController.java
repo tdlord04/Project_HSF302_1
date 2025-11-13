@@ -7,6 +7,7 @@ import jms.service.CustomFormService;
 import jms.service.JobPostingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +18,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/job-postings")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
 public class JobPostingController {
 
     private final JobPostingService jobPostingService;

@@ -5,6 +5,7 @@ import jms.dto.TrendPointDto;
 import jms.service.CompanyService;
 import jms.service.RecruitmentReportService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/recruitment-report")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
 public class RecruitmentReportController {
 
     private final RecruitmentReportService recruitmentReportService;

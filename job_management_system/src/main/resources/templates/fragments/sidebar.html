@@ -31,7 +31,7 @@
             </a>
             <a th:href="@{/admin/logs}"
                th:classappend="${currentPath == '/admin/logs'} ? 'active'">
-                <i class="bi bi-file-earmark-text me-2"></i> Đơn ứng tuyển
+                <i class="bi bi-clock-history me-2"></i> Lịch sử
             </a>
         </div>
 
@@ -42,13 +42,13 @@
         </a>
 
         <a th:href="@{/recruitment-report}"
-           th:classappend="${currentPath == '/recruitment-report'} ? 'active'">
+           th:classappend="${currentPath == '/recruitment-report' or currentPath.startsWith('/JobMS/custom-forms') or currentPath.startsWith('/JobMS/job-postings')} ? 'active'">
             <i class="bi bi-clipboard2-check me-2"></i> Tin tuyển dụng
         </a>
 
         <a th:href="@{/interviews}"
            th:classappend="${currentPath == '/interviews'} ? 'active'">
-            <i class="bi bi-clipboard2-check me-2"></i> Phỏng vấn
+            <i class="bi bi-person-rolodex me-2"></i> Phỏng vấn
         </a>
 
         <!-- Luồng 3 - Quản lý hồ sơ & Ứng tuyển -->

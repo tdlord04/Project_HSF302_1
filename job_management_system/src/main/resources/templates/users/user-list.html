@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/home}" lang="vi">
+      layout:decorate="~{fragments/home}">
 <head>
     <title layout:title="Danh sách người dùng">Danh sách người dùng</title>
 </head>
@@ -110,7 +110,8 @@
                             <td>
                                     <span th:if="${user.status.name() == 'ACTIVE'}"
                                           class="badge bg-success d-inline-flex align-items-center gap-1">
-                                        <i class="bi bi-check-circle"></i><span class="d-none d-sm-inline">Hoạt động</span>
+                                        <i class="bi bi-check-circle"></i><span
+                                            class="d-none d-sm-inline">Hoạt động</span>
                                     </span>
                                 <span th:if="${user.status.name() != 'ACTIVE'}"
                                       class="badge bg-danger d-inline-flex align-items-center gap-1">
@@ -119,17 +120,28 @@
                             </td>
                             <td class="text-center pe-3 pe-md-4">
                                 <div class="btn-group btn-group-sm" role="group">
+
+                                    <!-- Nút sửa -->
                                     <a th:href="@{/users/edit/{id}(id=${user.userId})}"
                                        class="btn btn-outline-primary"
-                                       title="Chỉnh sửa">
+                                       title="Chỉnh sửa"
+                                       th:if="(${#authorization.expression('hasRole(''ADMIN'')')} and ${user.role.name()} != 'ADMIN')
+                   or (${#authorization.expression('hasRole(''HR'')')} and ${user.role.name()} != 'ADMIN' and ${user.role.name()} != 'HR')
+                   or (${#authorization.expression('hasRole(''MANAGER'')')} and ${user.role.name()} != 'ADMIN' and ${user.role.name()} != 'HR' and ${user.role.name()} != 'MANAGER')">
                                         <i class="bi bi-pencil"></i>
                                     </a>
+
+                                    <!-- Nút xóa -->
                                     <a th:href="@{/users/delete/{id}(id=${user.userId})}"
                                        class="btn btn-outline-danger"
+                                       title="Xóa"
                                        onclick="return confirm('Xác nhận xóa: ' + '[[${user.fullName}]]' + '?')"
-                                       title="Xóa">
+                                       th:if="(${#authorization.expression('hasRole(''ADMIN'')')} and ${user.role.name()} != 'ADMIN')
+                   or (${#authorization.expression('hasRole(''HR'')')} and ${user.role.name()} != 'ADMIN' and ${user.role.name()} != 'HR')
+                   or (${#authorization.expression('hasRole(''MANAGER'')')} and ${user.role.name()} != 'ADMIN' and ${user.role.name()} != 'HR' and ${user.role.name()} != 'MANAGER')">
                                         <i class="bi bi-trash"></i>
                                     </a>
+
                                 </div>
                             </td>
                         </tr>
@@ -144,30 +156,42 @@
                 </div>
             </div>
 
-            <!-- Improved pagination with better styling -->
             <div th:if="${userPage.totalPages > 1}" class="card-footer bg-white border-top py-3">
                 <nav aria-label="Phân trang">
                     <ul class="pagination justify-content-center mb-0 flex-wrap gap-1">
+
+                        <!-- Trang trước -->
                         <li class="page-item" th:classappend="${userPage.first} ? 'disabled'">
                             <a class="page-link"
-                               th:href="@{|/users?page=${userPage.number - 1}&role=${role}&status=${status}&keyword=${keyword}|}"
+                               th:href="@{|/users?page=${userPage.number - 1}
+                        ${role != null and role != '' ? '&role=' + role : ''}
+                        ${status != null and status != '' ? '&status=' + status : ''}
+                        ${keyword != null and keyword != '' ? '&keyword=' + keyword : ''}|}"
                                aria-label="Trang trước">
                                 <i class="bi bi-chevron-left"></i>
                             </a>
                         </li>
 
+                        <!-- Các trang số -->
                         <li class="page-item"
                             th:each="i : ${#numbers.sequence(0, userPage.totalPages - 1)}"
                             th:classappend="${i == userPage.number} ? 'active'"
                             th:if="${i < 5 || i == userPage.number || i >= userPage.totalPages - 2}">
                             <a class="page-link"
                                th:text="${i + 1}"
-                               th:href="@{|/users?page=${i}&role=${role}&status=${status}&keyword=${keyword}|}"></a>
+                               th:href="@{|/users?page=${i}
+                        ${role != null and role != '' ? '&role=' + role : ''}
+                        ${status != null and status != '' ? '&status=' + status : ''}
+                        ${keyword != null and keyword != '' ? '&keyword=' + keyword : ''}|}"></a>
                         </li>
 
+                        <!-- Trang sau -->
                         <li class="page-item" th:classappend="${userPage.last} ? 'disabled'">
                             <a class="page-link"
-                               th:href="@{|/users?page=${userPage.number + 1}&role=${role}&status=${status}&keyword=${keyword}|}"
+                               th:href="@{|/users?page=${userPage.number + 1}
+                        ${role != null and role != '' ? '&role=' + role : ''}
+                        ${status != null and status != '' ? '&status=' + status : ''}
+                        ${keyword != null and keyword != '' ? '&keyword=' + keyword : ''}|}"
                                aria-label="Trang sau">
                                 <i class="bi bi-chevron-right"></i>
                             </a>
@@ -175,9 +199,8 @@
                     </ul>
                 </nav>
             </div>
-        </div>
 
-    </div>
+        </div>
 
     <style>
         /* Enhanced table styling for better visual hierarchy and polish */

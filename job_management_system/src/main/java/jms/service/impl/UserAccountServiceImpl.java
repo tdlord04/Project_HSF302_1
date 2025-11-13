@@ -12,6 +12,7 @@ import jms.mapper.UserAccountMapper;
 import jms.repository.AccountRepository;
 import jms.repository.CompanyRepository;
 import jms.repository.UserRepository;
+import jms.service.AuditLogService;
 import jms.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,11 +35,17 @@ public class UserAccountServiceImpl implements UserAccountService, UserDetailsSe
     private final AccountRepository accountRepository;
     private final CompanyRepository companyRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final AuditLogService auditLogService;
 
     @Override
     public Page<UserAccountDTO> findAllFiltered(String roleStr, String statusStr, String keyword, Pageable pageable) {
-        Role role = (roleStr == null || roleStr.isEmpty()) ? null : Role.valueOf(roleStr);
-        UserStatus status = (statusStr == null || statusStr.isEmpty()) ? null : UserStatus.valueOf(statusStr);
+        Role role = (roleStr == null || roleStr.isEmpty() || "null".equalsIgnoreCase(roleStr))
+                ? null
+                : Role.valueOf(roleStr.toUpperCase());
+
+        UserStatus status = (statusStr == null || statusStr.isEmpty() || "null".equalsIgnoreCase(statusStr))
+                ? null
+                : UserStatus.valueOf(statusStr.toUpperCase());
 
         return userRepository.findAllFiltered(role, status, keyword, pageable)
                 .map(mapper::toDTO);
@@ -63,17 +70,34 @@ public class UserAccountServiceImpl implements UserAccountService, UserDetailsSe
         user.setCompany(company);
         userRepository.save(user);
 
+        // Ghi Audit log
+        auditLogService.log(
+                user.getId(),
+                "TẠO NGƯỜI DÙNG",
+                "Tạo tài khoản cho: " + user.getFullName()
+        );
+
         mapper.toDTO(user);
     }
 
+
     @Override
     public void deleteUser(Long id) {
-        User user = userRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         Account account = user.getAccount();
         account.setDeletedAt(Instant.now());
         user.setDeletedAt(Instant.now());
 
         userRepository.save(user);
+
+        // Ghi Audit log
+        auditLogService.log(
+                user.getId(),
+                "XÓA NGƯỜI DÙNG",
+                "Xóa mềm tài khoản: " + user.getFullName()
+        );
     }
 
     @Override
@@ -86,19 +110,36 @@ public class UserAccountServiceImpl implements UserAccountService, UserDetailsSe
         User user = userRepository.findById(id).orElseThrow();
         Account account = user.getAccount();
 
+        String oldRole = account.getRole().name();
+        String oldStatus = account.getStatus().name();
+
         if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
             account.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
         }
-        mapper.updateAccountFromDTO(dto, account);
-        mapper.updateUserFromDTO(dto, user);
+        account.setRole(dto.getRole());
+        account.setStatus(dto.getStatus());
+        accountRepository.save(account);
+
+        mapper.updateUserFromDto(dto, user);
+
         if (dto.getCompanyId() != null) {
             Company company = companyRepository.findById(dto.getCompanyId()).orElseThrow();
             user.setCompany(company);
         }
 
-        accountRepository.save(account);
         userRepository.save(user);
+
+        // Ghi Audit Log
+        auditLogService.log(
+                user.getId(),
+                "CẬP NHẬT NGƯỜI DÙNG",
+                "Cập nhật tài khoản " + user.getFullName()
+                        + " | Vai trò: " + oldRole + " → " + dto.getRole()
+                        + " | Trạng thái: " + oldStatus + " → " + dto.getStatus()
+        );
     }
+
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
