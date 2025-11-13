@@ -166,7 +166,8 @@
                     </div>
                     <div class="card-body">
                         <p class="text-warning mb-0">
-                            <i class="bi bi-info-circle me-2"></i>Không có thông tin tin tuyển dụng cho đơn ứng tuyển này.
+                            <i class="bi bi-info-circle me-2"></i>Không có thông tin tin tuyển dụng cho đơn ứng tuyển
+                            này.
                         </p>
                     </div>
                 </div>
@@ -198,15 +199,14 @@
                             <tr>
                                 <td><strong>Trạng thái:</strong></td>
                                 <td>
-                                    <!-- Sửa lỗi cú pháp th:classappend -->
-                                    <span th:text="${application.status?.name() ?: application.status}"
-                                          class="badge"
-                                          th:classappend="${application.status?.name() == 'APPLIED'} ? 'bg-primary' :
-                                                          (${application.status?.name() == 'INTERVIEWING'} ? 'bg-warning' :
-                                                          (${application.status?.name() == 'REJECTED'} ? 'bg-danger' :
-                                                          (${application.status?.name() == 'OFFERED'} ? 'bg-success' :
-                                                          (${application.status?.name() == 'HIRED'} ? 'bg-info' : 'bg-secondary'))))">
-                                    </span>
+    <span th:text="${application.status}"
+          class="badge"
+          th:classappend="${application.status == 'APPLIED'} ? 'bg-primary' :
+                          (${application.status == 'INTERVIEWING'} ? 'bg-warning' :
+                          (${application.status == 'REJECTED'} ? 'bg-danger' :
+                          (${application.status == 'OFFERED'} ? 'bg-success' :
+                          (${application.status == 'HIRED'} ? 'bg-info' : 'bg-secondary'))))">
+    </span>
                                 </td>
                             </tr>
                             <tr>
@@ -274,6 +274,18 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="card mt-4 bg-light">
+        <div class="card-header">
+            <h6 class="card-title mb-0">Debug Information</h6>
+        </div>
+        <div class="card-body">
+            <p><strong>Application ID:</strong> <span th:text="${application?.id}">N/A</span></p>
+            <p><strong>Candidate ID:</strong> <span th:text="${application?.candidate?.id}">N/A</span></p>
+            <p><strong>Job Posting ID:</strong> <span th:text="${application?.jobPosting?.id}">N/A</span></p>
+            <p><strong>Candidate exists:</strong> <span th:text="${application?.candidate != null}">false</span></p>
+            <p><strong>Job Posting exists:</strong> <span th:text="${application?.jobPosting != null}">false</span></p>
         </div>
     </div>
 </div>
