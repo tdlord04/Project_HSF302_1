@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CandidateProfileService {
-    CandidateProfile createCandidateProfile(CandidateProfile candidateProfile);
+    CandidateProfile createCandidateProfile(CandidateProfile candidateProfile, List<Long> skillIds);
     Optional<CandidateProfile> getCandidateProfileById(Long id);
     Optional<CandidateProfile> getCandidateProfileByEmail(String email);
     List<CandidateProfile> getAllCandidateProfiles();
