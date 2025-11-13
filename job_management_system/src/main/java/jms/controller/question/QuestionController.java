@@ -5,10 +5,15 @@ import jms.entity.Question;
 import jms.service.QuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/questions")
@@ -112,6 +117,63 @@ public class QuestionController {
 		model.addAttribute("result", result);
 		model.addAttribute("answer", result.givenAnswer);
 		return "question/question-test";
+	}
+
+	// API endpoint để lấy 5 câu hỏi ngẫu nhiên
+	@GetMapping("/api/random")
+	@ResponseBody
+	public ResponseEntity<List<Question>> getRandomQuestions(
+		@RequestParam(value = "count", defaultValue = "5") int count
+	) {
+		List<Question> questions = questionService.getRandomQuestions(count);
+		return ResponseEntity.ok(questions);
+	}
+
+	// API endpoint để submit kết quả test
+	@PostMapping("/api/submit-test")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> submitTest(
+		@RequestBody Map<String, Object> request
+	) {
+		@SuppressWarnings("unchecked")
+		List<Map<String, String>> answers = (List<Map<String, String>>) request.get("answers");
+		
+		int correctCount = 0;
+		int totalQuestions = answers != null ? answers.size() : 0;
+		List<Map<String, Object>> results = new java.util.ArrayList<>();
+
+		if (answers != null) {
+			for (Map<String, String> answer : answers) {
+				Long questionId = Long.parseLong(answer.get("questionId"));
+				String givenAnswer = answer.get("answer") != null ? answer.get("answer") : "";
+				
+				Question question = questionService.getById(questionId);
+				String expectedAnswer = question.getCorrectAnswer() != null ? question.getCorrectAnswer() : "";
+				
+				boolean isCorrect = !expectedAnswer.isEmpty() &&
+					expectedAnswer.trim().equalsIgnoreCase(givenAnswer.trim());
+				
+				if (isCorrect) {
+					correctCount++;
+				}
+
+				Map<String, Object> result = new HashMap<>();
+				result.put("questionId", questionId);
+				result.put("questionText", question.getQuestionText());
+				result.put("givenAnswer", givenAnswer);
+				result.put("correctAnswer", expectedAnswer);
+				result.put("correct", isCorrect);
+				results.add(result);
+			}
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("totalQuestions", totalQuestions);
+		response.put("correctCount", correctCount);
+		response.put("score", totalQuestions > 0 ? (correctCount * 100.0 / totalQuestions) : 0);
+		response.put("results", results);
+
+		return ResponseEntity.ok(response);
 	}
 }
 

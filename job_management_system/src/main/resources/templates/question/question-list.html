@@ -26,9 +26,14 @@
 
 		<div class="d-flex justify-content-between align-items-center mb-3">
 			<h3 class="mb-0">Quản lý Câu hỏi</h3>
-			<a th:href="@{/questions/create}" class="btn btn-primary">
-				<i class="bi bi-plus-circle me-1"></i> Thêm câu hỏi
-			</a>
+			<div>
+				<button type="button" class="btn btn-success me-2" id="btnStartTest">
+					<i class="bi bi-pencil-square me-1"></i> Làm bài
+				</button>
+				<a th:href="@{/questions/create}" class="btn btn-primary">
+					<i class="bi bi-plus-circle me-1"></i> Thêm câu hỏi
+				</a>
+			</div>
 		</div>
 
 		<form th:action="@{/questions}" method="get" class="row g-2 align-items-end mb-3">
@@ -110,6 +115,277 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Modal Làm bài test -->
+	<div class="modal fade" id="testModal" tabindex="-1" aria-labelledby="testModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+		<div class="modal-dialog modal-lg modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header bg-primary text-white">
+					<h5 class="modal-title" id="testModalLabel">
+						<i class="bi bi-clock-history me-2"></i>Làm bài test
+					</h5>
+					<div class="ms-auto me-3">
+						<span class="badge bg-warning text-dark fs-6" id="timerDisplay">05:00</span>
+					</div>
+					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" id="btnCloseModal"></button>
+				</div>
+				<div class="modal-body">
+					<div id="loadingQuestions" class="text-center py-5">
+						<div class="spinner-border text-primary" role="status">
+							<span class="visually-hidden">Đang tải...</span>
+						</div>
+						<p class="mt-3">Đang tải câu hỏi...</p>
+					</div>
+					<form id="testForm" style="display: none;">
+						<div id="questionsContainer"></div>
+					</form>
+					<div id="testResults" style="display: none;"></div>
+				</div>
+				<div class="modal-footer" id="testModalFooter">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnCancelTest">Hủy</button>
+					<button type="button" class="btn btn-primary" id="btnSubmitTest">Nộp bài</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	const contextPath = /*[[@{/}]]*/ '';
+	/*]]>*/
+</script>
+<script>
+	let testModal;
+	let timerInterval;
+	let timeRemaining = 300; // 5 phút = 300 giây
+	let questions = [];
+	let testStarted = false;
+
+	document.addEventListener('DOMContentLoaded', function() {
+		testModal = new bootstrap.Modal(document.getElementById('testModal'));
+		
+		document.getElementById('btnStartTest').addEventListener('click', startTest);
+		document.getElementById('btnSubmitTest').addEventListener('click', submitTest);
+		document.getElementById('btnCloseModal').addEventListener('click', function() {
+			if (testStarted && !confirm('Bạn có chắc muốn đóng? Bài làm sẽ bị mất!')) {
+				return false;
+			}
+			stopTimer();
+		});
+		document.getElementById('btnCancelTest').addEventListener('click', function() {
+			if (testStarted && !confirm('Bạn có chắc muốn hủy? Bài làm sẽ bị mất!')) {
+				return false;
+			}
+			stopTimer();
+		});
+
+		// Đóng modal khi hết thời gian
+		testModal._element.addEventListener('hidden.bs.modal', function() {
+			stopTimer();
+			resetTest();
+		});
+	});
+
+	function startTest() {
+		document.getElementById('loadingQuestions').style.display = 'block';
+		document.getElementById('testForm').style.display = 'none';
+		document.getElementById('testResults').style.display = 'none';
+		document.getElementById('testModalFooter').style.display = 'flex';
+		document.getElementById('btnSubmitTest').disabled = false;
+		
+		timeRemaining = 300;
+		testStarted = false;
+		questions = [];
+		
+		testModal.show();
+		
+		// Lấy 5 câu hỏi ngẫu nhiên
+		fetch(contextPath + 'questions/api/random?count=5')
+			.then(response => response.json())
+			.then(data => {
+				questions = data;
+				displayQuestions();
+				startTimer();
+				testStarted = true;
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				alert('Không thể tải câu hỏi. Vui lòng thử lại!');
+				testModal.hide();
+			});
+	}
+
+	function displayQuestions() {
+		const container = document.getElementById('questionsContainer');
+		container.innerHTML = '';
+		
+		questions.forEach((question, index) => {
+			const questionDiv = document.createElement('div');
+			questionDiv.className = 'mb-4 p-3 border rounded';
+			questionDiv.innerHTML = `
+				<h6 class="mb-3">
+					<span class="badge bg-primary me-2">Câu ${index + 1}</span>
+					${escapeHtml(question.questionText)}
+				</h6>
+				<div class="mb-2">
+					<label class="form-label fw-bold">Đáp án của bạn:</label>
+					<textarea 
+						class="form-control" 
+						name="answer_${question.id}" 
+						data-question-id="${question.id}"
+						rows="4" 
+						placeholder="Nhập đáp án của bạn..."
+						required></textarea>
+				</div>
+			`;
+			container.appendChild(questionDiv);
+		});
+		
+		document.getElementById('loadingQuestions').style.display = 'none';
+		document.getElementById('testForm').style.display = 'block';
+	}
+
+	function startTimer() {
+		updateTimerDisplay();
+		timerInterval = setInterval(() => {
+			timeRemaining--;
+			updateTimerDisplay();
+			
+			if (timeRemaining <= 0) {
+				stopTimer();
+				alert('Hết thời gian! Tự động nộp bài.');
+				submitTest();
+			} else if (timeRemaining <= 60) {
+				document.getElementById('timerDisplay').classList.add('bg-danger');
+				document.getElementById('timerDisplay').classList.remove('bg-warning');
+			}
+		}, 1000);
+	}
+
+	function stopTimer() {
+		if (timerInterval) {
+			clearInterval(timerInterval);
+			timerInterval = null;
+		}
+	}
+
+	function updateTimerDisplay() {
+		const minutes = Math.floor(timeRemaining / 60);
+		const seconds = timeRemaining % 60;
+		document.getElementById('timerDisplay').textContent = 
+			`${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+	}
+
+	function submitTest() {
+		if (!testStarted) return;
+		
+		stopTimer();
+		document.getElementById('btnSubmitTest').disabled = true;
+		
+		// Thu thập đáp án
+		const answers = [];
+		questions.forEach(question => {
+			const answerInput = document.querySelector(`textarea[data-question-id="${question.id}"]`);
+			answers.push({
+				questionId: question.id.toString(),
+				answer: answerInput ? answerInput.value : ''
+			});
+		});
+		
+		// Gửi kết quả
+		fetch(contextPath + 'questions/api/submit-test', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ answers: answers })
+		})
+		.then(response => response.json())
+		.then(data => {
+			displayResults(data);
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			alert('Có lỗi xảy ra khi nộp bài!');
+		});
+	}
+
+	function displayResults(data) {
+		const resultsDiv = document.getElementById('testResults');
+		let html = `
+			<div class="alert alert-info">
+				<h5 class="mb-3">
+					<i class="bi bi-trophy me-2"></i>Kết quả bài test
+				</h5>
+				<p class="mb-2"><strong>Số câu đúng:</strong> ${data.correctCount}/${data.totalQuestions}</p>
+				<p class="mb-0"><strong>Điểm số:</strong> <span class="badge bg-success fs-6">${data.score.toFixed(1)}%</span></p>
+			</div>
+			<hr>
+			<h6 class="mb-3">Chi tiết đáp án:</h6>
+		`;
+		
+		data.results.forEach((result, index) => {
+			const badgeClass = result.correct ? 'bg-success' : 'bg-danger';
+			const icon = result.correct ? 'bi-check-circle-fill' : 'bi-x-circle-fill';
+			html += `
+				<div class="mb-3 p-3 border rounded ${result.correct ? 'border-success' : 'border-danger'}">
+					<h6>
+						<span class="badge ${badgeClass} me-2">
+							<i class="bi ${icon}"></i> Câu ${index + 1}
+						</span>
+						${escapeHtml(result.questionText)}
+					</h6>
+					<div class="mt-2">
+						<p class="mb-1"><strong>Đáp án của bạn:</strong> 
+							<span class="${result.correct ? 'text-success' : 'text-danger'}">
+								${escapeHtml(result.givenAnswer || '(Chưa trả lời)')}
+							</span>
+						</p>
+						<p class="mb-0"><strong>Đáp án đúng:</strong> 
+							<span class="text-success">${escapeHtml(result.correctAnswer || '(Không có)')}</span>
+						</p>
+					</div>
+				</div>
+			`;
+		});
+		
+		resultsDiv.innerHTML = html;
+		document.getElementById('testForm').style.display = 'none';
+		document.getElementById('testResults').style.display = 'block';
+		document.getElementById('testModalFooter').innerHTML = `
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+			<button type="button" class="btn btn-primary" onclick="startTest()">Làm lại</button>
+		`;
+	}
+
+	function resetTest() {
+		timeRemaining = 300;
+		testStarted = false;
+		questions = [];
+		document.getElementById('testForm').innerHTML = '';
+		document.getElementById('testResults').innerHTML = '';
+		document.getElementById('timerDisplay').classList.remove('bg-danger');
+		document.getElementById('timerDisplay').classList.add('bg-warning');
+		document.getElementById('testModalFooter').innerHTML = `
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnCancelTest">Hủy</button>
+			<button type="button" class="btn btn-primary" id="btnSubmitTest">Nộp bài</button>
+		`;
+		document.getElementById('btnSubmitTest').addEventListener('click', submitTest);
+		document.getElementById('btnCancelTest').addEventListener('click', function() {
+			if (testStarted && !confirm('Bạn có chắc muốn hủy? Bài làm sẽ bị mất!')) {
+				return false;
+			}
+			stopTimer();
+		});
+	}
+
+	function escapeHtml(text) {
+		const div = document.createElement('div');
+		div.textContent = text;
+		return div.innerHTML;
+	}
+</script>
 </section>
 </body>
 </html>

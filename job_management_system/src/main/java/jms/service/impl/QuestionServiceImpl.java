@@ -9,6 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class QuestionServiceImpl implements QuestionService {
@@ -32,7 +34,7 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	public Question getById(Long id) {
 		return questionRepository.findById(id)
-			.orElseThrow(() -> new RuntimeException("Question not found with id: " + id));
+				.orElseThrow(() -> new RuntimeException("Question not found with id: " + id));
 	}
 
 	@Override
@@ -56,6 +58,13 @@ public class QuestionServiceImpl implements QuestionService {
 		}
 		questionRepository.deleteById(id);
 	}
+
+	@Override
+	public List<Question> getRandomQuestions(int count) {
+		List<Question> allQuestions = questionRepository.findRandomQuestions();
+		if (allQuestions.size() <= count) {
+			return allQuestions;
+		}
+		return allQuestions.subList(0, Math.min(count, allQuestions.size()));
+	}
 }
-
-
