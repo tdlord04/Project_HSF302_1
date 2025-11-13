@@ -33,23 +33,18 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/css/**", "/js/**", "/images/**").permitAll()
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/manager/**").hasAnyRole("MANAGER", "ADMIN")
-//                        .requestMatchers("/hr/**").hasAnyRole("HR", "ADMIN")
-//                        .requestMatchers("/interview/**").hasAnyRole("INTERVIEWER", "ADMIN")
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
-//                .formLogin(form -> form
-//                        .loginPage("/auth/login")             // GET login page
-//                        .loginProcessingUrl("/auth/login")    // POST action
-//                        .successHandler((req, res, auth) -> {
-//                            String contextPath = req.getContextPath();
-//                            res.sendRedirect(contextPath + "/");
-//                        })
-//                        .failureUrl("/auth/login?error=true")
-//                        .permitAll()
-//                )
-                .formLogin(form -> form.disable())
+                .formLogin(form -> form
+                        .loginPage("/auth/login")             // GET login page
+                        .loginProcessingUrl("/auth/login")    // POST action
+                        .successHandler((req, res, auth) -> {
+                            String contextPath = req.getContextPath();
+                            res.sendRedirect(contextPath + "/dashboard");
+                        })
+                        .failureUrl("/auth/login?error=true")
+                        .permitAll()
+                )
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
                         .logoutSuccessUrl("/auth/login?logout=true")

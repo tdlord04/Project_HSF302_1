@@ -11,4 +11,7 @@ public interface UserAccountService {
 
     void deleteUser(Long id);
 
+    UserAccountDTO findUserById(Long id);
+
+    void updateUser(Long id, UserAccountDTO dto);
 }

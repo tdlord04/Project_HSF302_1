@@ -21,11 +21,6 @@ public class UserAccountDTO {
     // ==== ACCOUNT INFO ====
     private Long accountId;
 
-    @NotBlank(message = "Tên đăng nhập không được để trống")
-    @Size(min = 4, max = 100, message = "Tên đăng nhập phải từ 4–100 ký tự")
-    @Pattern(regexp = "^[a-zA-Z0-9._-]+$", message = "Tên đăng nhập chỉ chứa chữ, số và ký tự ._-")
-    private String username;
-
     @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không hợp lệ")
     private String email;

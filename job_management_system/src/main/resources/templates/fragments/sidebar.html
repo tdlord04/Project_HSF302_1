@@ -21,7 +21,7 @@
         </a>
 
         <a data-bs-toggle="collapse" href="#userSubmenu"
-           th:classappend="${currentPath == '/manager/users' or currentPath == '/admin/logs'} ? 'active'">
+           th:classappend="${currentPath.startsWith('/JobMS/users') or currentPath.startsWith('/JobMS/admin/logs')} ? 'active'">
             <i class="bi bi-file-earmark-person me-2"></i> Người dùng và lịch sử
         </a>
         <div class="collapse submenu" id="userSubmenu">

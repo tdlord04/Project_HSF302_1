@@ -22,7 +22,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Slf4j
@@ -47,9 +46,7 @@ public class UserAccountServiceImpl implements UserAccountService, UserDetailsSe
 
     @Override
     public void createUser(UserAccountDTO dto) {
-        if (accountRepository.existsByUsername(dto.getUsername())) {
-            throw new DuplicateFieldException("Tên đăng nhập đã tồn tại: " + dto.getUsername());
-        }
+
         if (accountRepository.existsByEmail(dto.getEmail())) {
             throw new DuplicateFieldException("Email đã tồn tại: " + dto.getEmail());
         }
@@ -76,6 +73,30 @@ public class UserAccountServiceImpl implements UserAccountService, UserDetailsSe
         account.setDeletedAt(Instant.now());
         user.setDeletedAt(Instant.now());
 
+        userRepository.save(user);
+    }
+
+    @Override
+    public UserAccountDTO findUserById(Long id) {
+        return userRepository.findById(id).map(mapper::toDTO).orElseThrow(() -> new RuntimeException("User is not found"));
+    }
+
+    @Override
+    public void updateUser(Long id, UserAccountDTO dto) {
+        User user = userRepository.findById(id).orElseThrow();
+        Account account = user.getAccount();
+
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            account.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
+        }
+        mapper.updateAccountFromDTO(dto, account);
+        mapper.updateUserFromDTO(dto, user);
+        if (dto.getCompanyId() != null) {
+            Company company = companyRepository.findById(dto.getCompanyId()).orElseThrow();
+            user.setCompany(company);
+        }
+
+        accountRepository.save(account);
         userRepository.save(user);
     }
 

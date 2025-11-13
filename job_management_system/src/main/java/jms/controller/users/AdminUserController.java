@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -28,7 +29,6 @@ public class AdminUserController {
 
     private final UserAccountService userAccountService;
     private final CompanyRepository companyRepository;
-    private final AccountRepository accountRepository;
 
     @GetMapping
     public String listUsers(
@@ -57,47 +57,62 @@ public class AdminUserController {
     }
 
     @GetMapping("/create")
-    public String showCreateForm(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        String email = userDetails.getUsername(); // chính là email đăng nhập
-        Account current = accountRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        model.addAttribute("userAccountDTO", new UserAccountDTO());
-        model.addAttribute("roles", current.getRole().getAssignableRoles());
-        model.addAttribute("statuses", UserStatus.values());
-        model.addAttribute("companies", companyRepository.findAll()); // nếu có danh sách công ty
+    public String createForm(Model model) {
+        UserAccountDTO dto = new UserAccountDTO();
+        model.addAttribute("userAccountDTO", dto);
+        model.addAttribute("editMode", false);
+        addCommonAttributes(model);
         return "users/user-form";
     }
 
     @PostMapping("/create")
-    public String createUser(
-            @Valid @ModelAttribute("userAccountDTO") UserAccountDTO dto,
-            BindingResult bindingResult,
-            Model model,
-            @AuthenticationPrincipal UserDetails userDetails) {
-
-        String email = userDetails.getUsername(); // chính là email đăng nhập
-        Account current = accountRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        if (bindingResult.hasErrors()) {
-            List<Role> assignable = current.getRole().getAssignableRoles();
-            model.addAttribute("roles", assignable);
-            model.addAttribute("statuses", UserStatus.values());
-            model.addAttribute("companies", companyRepository.findAll());
+    public String create(@Valid @ModelAttribute("userAccountDTO") UserAccountDTO dto,
+                         BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            addCommonAttributes(model);
+            model.addAttribute("editMode", false);
             return "users/user-form";
         }
-
         userAccountService.createUser(dto);
-        return "redirect:/users/users?success";
+        return "redirect:/users?success";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editForm(@PathVariable Long id, Model model) {
+        UserAccountDTO dto = userAccountService.findUserById(id);
+        model.addAttribute("userAccountDTO", dto);
+        model.addAttribute("editMode", true);
+        addCommonAttributes(model);
+        return "users/user-form";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String update(@PathVariable Long id,
+                         @Valid @ModelAttribute("userAccountDTO") UserAccountDTO dto,
+                         BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            addCommonAttributes(model);
+            model.addAttribute("editMode", true);
+            return "users/user-form";
+        }
+        userAccountService.updateUser(id, dto);
+        return "redirect:/users?success";
+    }
+
+    private void addCommonAttributes(Model model) {
+        List<Role> roles = Arrays.asList(Role.values());
+        List<UserStatus> statuses = Arrays.asList(UserStatus.values());
+        model.addAttribute("roles", roles);
+        model.addAttribute("statuses", statuses);
+        model.addAttribute("companies", companyRepository.findAll());
     }
 
     @GetMapping("/delete/{id}")
 //    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')") // Chỉ users mới xóa được
     public String deleteUser(@PathVariable("id") Long userId) {
         userAccountService.deleteUser(userId);
-        return "redirect:/manager/users?deleted";
+        return "redirect:/users?deleted";
     }
-
 
     @GetMapping("/api")
     public ResponseEntity<Page<UserAccountDTO>> listUsers(

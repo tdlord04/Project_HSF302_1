@@ -22,7 +22,6 @@ public interface UserAccountMapper {
     // Entity -> DTO (only 1 source, safe)
     @Mapping(source = "id", target = "userId")
     @Mapping(source = "account.id", target = "accountId")
-    @Mapping(source = "account.username", target = "username")
     @Mapping(source = "account.email", target = "email")
     @Mapping(source = "account.role", target = "role")
     @Mapping(source = "account.status", target = "status")
