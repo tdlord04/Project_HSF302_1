@@ -8,12 +8,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/applications")
@@ -62,29 +64,48 @@ public class ApplicationController {
         return "applications/list";
     }
 
-    // PHƯƠNG THỨC NÀY ĐÃ TỒN TẠI - XÓA PHIÊN BẢN TRÙNG LẶP
     @GetMapping("/{id}")
     public String viewApplication(@PathVariable Long id, Model model) {
-        return applicationService.getApplicationById(id)
-                .map(application -> {
-                    List<ApplicationStatus> allStatuses = Arrays.asList(ApplicationStatus.values());
-                    model.addAttribute("application", application);
-                    model.addAttribute("allStatuses", allStatuses);
-                    model.addAttribute("currentPath", "/applications");
-                    return "applications/detail";
-                })
-                .orElse("redirect:/applications");
+        try {
+            Optional<Application> applicationOpt = applicationService.getApplicationById(id);
+
+            if (applicationOpt.isEmpty()) {
+                // Nếu không tìm thấy application
+                model.addAttribute("errorMessage", "Không tìm thấy đơn ứng tuyển với ID: " + id);
+                return "redirect:/applications";
+            }
+
+            Application application = applicationOpt.get();
+
+            // Debug log
+            System.out.println("Application: " + application);
+            System.out.println("Candidate: " + application.getCandidate());
+            System.out.println("Job Posting: " + application.getJobPosting());
+
+            model.addAttribute("application", application);
+            model.addAttribute("allStatuses", ApplicationStatus.values());
+            return "applications/detail";
+        } catch (Exception e) {
+            log.error("Error viewing application with id: {}", id, e);
+            return "redirect:/applications";
+        }
     }
 
 
     @PostMapping("/{id}/status")
+    @Transactional
     public String updateApplicationStatus(@PathVariable Long id,
                                           @RequestParam ApplicationStatus status,
                                           RedirectAttributes redirectAttributes) {
         try {
-            applicationService.updateApplicationStatus(id, status);
+            Application updatedApplication = applicationService.updateApplicationStatus(id, status);
             redirectAttributes.addFlashAttribute("successMessage", "Cập nhật trạng thái đơn ứng tuyển thành công!");
+
+            // THÊM THÔNG TIN ỨNG DỤNG ĐÃ CẬP NHẬT VÀO REDIRECT ATTRIBUTES NẾU CẦN
+            redirectAttributes.addAttribute("id", id);
+
         } catch (Exception e) {
+            log.error("Error updating application status for id: {}", id, e);
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi cập nhật trạng thái: " + e.getMessage());
         }
         return "redirect:/applications/" + id;

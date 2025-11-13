@@ -1,17 +1,16 @@
-// DocumentController.java
 package jms.controller;
 
-import jms.entity.Document;
 import jms.service.DocumentService;
-import jms.service.CandidateProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/documents")
@@ -20,73 +19,63 @@ import java.util.List;
 public class DocumentController {
 
     private final DocumentService documentService;
-    private final CandidateProfileService candidateProfileService;
 
-    @GetMapping
-    public String listDocuments(
-            @RequestParam(required = false) Long candidateId,
-            @RequestParam(required = false) String fileType,
-            Model model) {
+    @GetMapping("/download/{id}")
+    public ResponseEntity<byte[]> downloadDocument(@PathVariable Long id) {
+        log.info("=== DOWNLOAD DOCUMENT REQUEST ===");
+        log.info("Document ID: {}", id);
 
-        List<Document> documents;
-
-        if (candidateId != null && fileType != null) {
-            documents = documentService.getDocumentsByCandidateAndFileType(candidateId, fileType);
-        } else if (candidateId != null) {
-            documents = documentService.getDocumentsByCandidateId(candidateId);
-        } else {
-            // In real application, you might want pagination here
-            documents = List.of(); // Or implement getAllDocuments method
-        }
-
-        model.addAttribute("documents", documents);
-        model.addAttribute("candidateId", candidateId);
-        model.addAttribute("fileType", fileType);
-        model.addAttribute("currentPath", "/documents");
-
-        return "documents/list";
-    }
-
-    @GetMapping("/upload")
-    public String showUploadForm(Model model) {
-        model.addAttribute("document", new Document());
-        model.addAttribute("candidates", candidateProfileService.getAllCandidateProfiles());
-        model.addAttribute("currentPath", "/documents");
-        return "documents/upload";
-    }
-
-    @PostMapping("/upload")
-    public String uploadDocument(@ModelAttribute Document document,
-                                 RedirectAttributes redirectAttributes) {
         try {
-            documentService.uploadDocument(document);
-            redirectAttributes.addFlashAttribute("successMessage", "Upload tài liệu thành công!");
-            return "redirect:/documents";
+            var document = documentService.getDocumentById(id);
+            log.info("Document found: {} - {}", document.getId(), document.getDocumentName());
+            log.info("File name: {}, File type: {}", document.getFileName(), document.getFileType());
+
+            byte[] fileData = documentService.downloadDocument(id);
+            log.info("File data length: {} bytes", fileData.length);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(document.getFileType()));
+            headers.setContentDispositionFormData("attachment", document.getFileName());
+            headers.setContentLength(fileData.length);
+
+            log.info("=== DOWNLOAD SUCCESS ===");
+            return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi upload tài liệu: " + e.getMessage());
-            return "redirect:/documents/upload";
+            log.error("❌ ERROR downloading document with id: {}", id, e);
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @GetMapping("/{id}")
-    public String viewDocument(@PathVariable Long id, Model model) {
-        return documentService.getDocumentById(id)
-                .map(document -> {
-                    model.addAttribute("document", document);
-                    model.addAttribute("currentPath", "/documents");
-                    return "documents/detail";
-                })
-                .orElse("redirect:/documents");
-    }
+    @GetMapping("/preview/{id}")
+    public ResponseEntity<byte[]> previewDocument(@PathVariable Long id) {
+        log.info("=== PREVIEW DOCUMENT REQUEST ===");
+        log.info("Document ID: {}", id);
 
-    @PostMapping("/{id}/delete")
-    public String deleteDocument(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            documentService.deleteDocument(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Xóa tài liệu thành công!");
+            var document = documentService.getDocumentById(id);
+            log.info("Document found: {} - {}", document.getId(), document.getDocumentName());
+
+            byte[] fileData = documentService.downloadDocument(id);
+            log.info("File data length: {} bytes", fileData.length);
+
+            HttpHeaders headers = new HttpHeaders();
+
+            // Set content type phù hợp cho preview
+            if (document.getFileType().contains("pdf")) {
+                headers.setContentType(MediaType.APPLICATION_PDF);
+            } else if (document.getFileType().contains("image")) {
+                headers.setContentType(MediaType.parseMediaType(document.getFileType()));
+            } else {
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            }
+
+            headers.setContentLength(fileData.length);
+
+            log.info("=== PREVIEW SUCCESS ===");
+            return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi xóa tài liệu: " + e.getMessage());
+            log.error(" ERROR previewing document with id: {}", id, e);
+            return ResponseEntity.notFound().build();
         }
-        return "redirect:/documents";
     }
 }
