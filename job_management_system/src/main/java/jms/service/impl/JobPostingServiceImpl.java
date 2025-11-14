@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,7 +79,9 @@ public class JobPostingServiceImpl implements JobPostingService {
         if (!jobPostingRepository.existsById(id)) {
             throw new RuntimeException("JobPosting not found with id: " + id);
         }
-        jobPostingRepository.deleteById(id);
+        JobPosting j = jobPostingRepository.findById(id).orElse(null);
+        j.setDeletedAt(Instant.now());
+        jobPostingRepository.save(j);
     }
 
     @Override
